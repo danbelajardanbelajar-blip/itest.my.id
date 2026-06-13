@@ -3,134 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? e($title) : 'Ujian Sedang Berlangsung' ?></title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= isset($title) ? e($title) : APP_NAME ?></title>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/exam.css') ?>">
 </head>
-<body class="bg-light">
+<body oncontextmenu="return false;" oncopy="return false;" onpaste="return false;">
 
-    <!-- Sticky Exam Header -->
-    <div class="exam-header shadow-sm d-flex justify-content-between align-items-center">
-        <div>
-            <h5 class="mb-0 fw-bold"><?= e($exam->title ?? 'Ujian') ?></h5>
-            <small class="text-muted"><?= e(Auth::user()->name) ?> - <?= e($exam->subject_name ?? 'Mata Pelajaran') ?></small>
-        </div>
-        <div class="text-end">
-            <div class="badge bg-danger fs-5 px-3 py-2" id="exam-timer">
-                <i class="fas fa-clock me-2"></i> <span id="time-display">00:00:00</span>
+    <div class="exam-container">
+        <!-- Top Navigation / Header -->
+        <header class="exam-header">
+            <div class="exam-title">
+                <i class="fas fa-map-marker-alt title-icon"></i>
+                <h2><?= e($exam->title ?? 'Simulasi Ujian') ?></h2>
             </div>
+            <div class="exam-timer" id="timer-container">
+                <i class="fas fa-clock"></i>
+                <span id="time-left">00:00</span>
+            </div>
+        </header>
+
+        <div class="exam-layout">
+            <!-- Main Content Area -->
+            <main class="exam-main-panel glass-panel">
+                <div class="question-header">
+                    <h3 id="question-number">Soal No. 1</h3>
+                    <button class="flag-button" id="flag-btn" onclick="toggleFlag()">
+                        <i class="fas fa-flag"></i>
+                        <span id="flag-text">Ragu-ragu</span>
+                    </button>
+                </div>
+
+                <div class="question-content">
+                    <div id="question-image" style="display: none; margin-bottom: 24px; text-align: left;">
+                        <img src="" alt="Lampiran Soal" style="max-width: 100%; max-height: 400px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                    </div>
+                    <p class="question-text" id="question-text">Memuat soal...</p>
+
+                    <div class="options-list" id="options-list">
+                        <!-- Options will be injected here -->
+                    </div>
+                </div>
+
+                <div class="exam-navigation">
+                    <button class="nav-btn btn-secondary" id="btn-prev" onclick="prevQuestion()" disabled>
+                        <i class="fas fa-chevron-left"></i>
+                        <span>Kembali</span>
+                    </button>
+
+                    <button class="nav-btn btn-primary" id="btn-next" onclick="nextQuestion()">
+                        <span>Selanjutnya</span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+
+                    <button class="nav-btn btn-finish" id="btn-finish" onclick="finishExam()" style="display: none;">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Selesai Ujian</span>
+                    </button>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - Number Grid -->
+            <div class="mobile-nav-toggle-wrapper">
+                <button class="mobile-nav-toggle btn-secondary" onclick="toggleNav()">
+                    <span id="nav-toggle-text">Lihat Peta Navigasi Soal</span>
+                </button>
+            </div>
+            
+            <aside class="exam-sidebar glass-panel nav-closed" id="exam-sidebar">
+                <div class="sidebar-header">
+                    <h4>Navigasi Soal</h4>
+                    <div class="progress-text" id="progress-text">
+                        0 / 0 Dijawab
+                    </div>
+                </div>
+
+                <div class="question-grid" id="question-grid">
+                    <!-- Grid buttons injected here -->
+                </div>
+
+                <div class="sidebar-legend">
+                    <div class="legend-item">
+                        <div class="legend-color color-answered"></div>
+                        <span>Sudah Dijawab</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-flagged"></div>
+                        <span>Ragu-ragu</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-default"></div>
+                        <span>Belum Dijawab</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color color-active"></div>
+                        <span>Sedang Aktif</span>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
 
-    <div class="container-fluid py-4" id="app-content">
-        <div class="row">
-            <!-- Left Panel: Question -->
-            <div class="col-lg-8 mb-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0 d-flex justify-content-between">
-                        <h6 class="fw-bold mb-0">Soal No. <span id="current-question-no" class="fs-5">1</span></h6>
-                        <div><i class="fas fa-text-height text-muted" role="button" title="Ubah Ukuran Teks"></i></div>
-                    </div>
-                    <div class="card-body fs-5" id="question-text-container">
-                        <!-- Placeholder Question -->
-                        <p>Ini adalah contoh teks soal ujian CBT yang sangat panjang dan butuh ketelitian untuk dibaca. Pilihlah satu jawaban yang paling tepat di bawah ini.</p>
-                        
-                        <div class="mt-4">
-                            <div class="form-check mb-3 p-3 border rounded choice-item">
-                                <input class="form-check-input ms-0 me-3 mt-1" type="radio" name="answer" id="choiceA" value="A">
-                                <label class="form-check-label w-100 stretched-link" for="choiceA">
-                                    A. Ini adalah contoh pilihan jawaban A
-                                </label>
-                            </div>
-                            <div class="form-check mb-3 p-3 border rounded choice-item">
-                                <input class="form-check-input ms-0 me-3 mt-1" type="radio" name="answer" id="choiceB" value="B">
-                                <label class="form-check-label w-100 stretched-link" for="choiceB">
-                                    B. Ini adalah contoh pilihan jawaban B
-                                </label>
-                            </div>
-                            <div class="form-check mb-3 p-3 border rounded choice-item">
-                                <input class="form-check-input ms-0 me-3 mt-1" type="radio" name="answer" id="choiceC" value="C">
-                                <label class="form-check-label w-100 stretched-link" for="choiceC">
-                                    C. Ini adalah contoh pilihan jawaban C
-                                </label>
-                            </div>
-                            <div class="form-check mb-3 p-3 border rounded choice-item">
-                                <input class="form-check-input ms-0 me-3 mt-1" type="radio" name="answer" id="choiceD" value="D">
-                                <label class="form-check-label w-100 stretched-link" for="choiceD">
-                                    D. Ini adalah contoh pilihan jawaban D
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white pt-0 pb-4 border-top-0 d-flex justify-content-between mt-3">
-                        <button class="btn btn-outline-secondary px-4"><i class="fas fa-chevron-left me-2"></i> Sebelumnya</button>
-                        <button class="btn btn-warning px-4 text-dark"><input type="checkbox" class="form-check-input me-2"> Ragu-ragu</button>
-                        <button class="btn btn-primary px-4">Selanjutnya <i class="fas fa-chevron-right ms-2"></i></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Panel: Navigation Grid -->
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
-                        <h6 class="fw-bold mb-0">Navigasi Soal</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex flex-wrap justify-content-start" id="question-nav-grid">
-                            <!-- Placeholder Nav Buttons -->
-                            <?php for($i=1; $i<=25; $i++): ?>
-                                <?php 
-                                    $class = '';
-                                    if($i==1) $class = 'active';
-                                    if($i==2 || $i==3) $class = 'answered';
-                                    if($i==5) $class = 'doubtful';
-                                ?>
-                                <button class="question-nav-btn <?= $class ?>"><?= $i ?></button>
-                            <?php endfor; ?>
-                        </div>
-                    </div>
-                    <div class="card-footer bg-white border-top-0 d-flex flex-column gap-2 pb-4">
-                        <div class="d-flex align-items-center small mb-2 text-muted">
-                            <span class="d-inline-block bg-success rounded me-2" style="width: 15px; height: 15px;"></span> Sudah Dijawab
-                            <span class="d-inline-block bg-warning rounded ms-3 me-2" style="width: 15px; height: 15px;"></span> Ragu-ragu
-                            <span class="d-inline-block bg-white border rounded ms-3 me-2" style="width: 15px; height: 15px;"></span> Belum Dijawab
-                        </div>
-                        <button class="btn btn-danger w-100 fw-bold mt-2"><i class="fas fa-paper-plane me-2"></i> Selesai Ujian</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        .choice-item:hover {
-            background-color: #f8f9fa;
-        }
-        .choice-item:has(input:checked) {
-            background-color: #e7f1ff;
-            border-color: #0d6efd !important;
-        }
-    </style>
-
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Fake Timer for visual demonstration
-        let remainingSeconds = 3600; // 1 hour
+        // Dummy data for testing UI - will be replaced with real data later
+        const questions = [
+            { id: 1, text: "Apa ibukota Indonesia?", options: ["Jakarta", "Bandung", "Surabaya", "Medan"], type: "multiple_choice" },
+            { id: 2, text: "Berapa hasil 5 + 5?", options: ["8", "9", "10", "11"], type: "multiple_choice" },
+            { id: 3, text: "Siapa penemu lampu pijar?", options: ["Thomas Edison", "Nikola Tesla", "Albert Einstein", "Isaac Newton"], type: "multiple_choice" }
+        ];
+
+        let currentIdx = 0;
+        let answers = {};
+        let flagged = {};
+        let timeLeft = <?= isset($exam->duration_minutes) ? $exam->duration_minutes * 60 : 3600 ?>;
+        
+        function renderQuestion() {
+            if (questions.length === 0) return;
+            const q = questions[currentIdx];
+            document.getElementById('question-number').innerText = `Soal No. ${currentIdx + 1}`;
+            document.getElementById('question-text').innerText = q.text;
+            
+            // Render Options
+            const optionsList = document.getElementById('options-list');
+            optionsList.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[q.id] === idx;
+                const optionLabel = String.fromCharCode(65 + idx);
+                
+                const div = document.createElement('div');
+                div.className = `option-item ${isSelected ? 'selected' : ''}`;
+                div.style.alignItems = 'flex-start';
+                div.onclick = () => selectOption(q.id, idx);
+                
+                div.innerHTML = `
+                    <div class="option-label">${optionLabel}</div>
+                    <div class="option-text" style="flex: 1; display: flex; flex-direction: column;">
+                        <div>${opt}</div>
+                    </div>
+                    ${isSelected ? '<i class="fas fa-check-circle check-icon"></i>' : ''}
+                `;
+                optionsList.appendChild(div);
+            });
+
+            // Update Flag
+            const flagBtn = document.getElementById('flag-btn');
+            const flagText = document.getElementById('flag-text');
+            if (flagged[q.id]) {
+                flagBtn.classList.add('active');
+                flagText.innerText = 'Ragu-ragu (Ditandai)';
+            } else {
+                flagBtn.classList.remove('active');
+                flagText.innerText = 'Ragu-ragu';
+            }
+
+            // Navigation Buttons
+            document.getElementById('btn-prev').disabled = currentIdx === 0;
+            if (currentIdx === questions.length - 1) {
+                document.getElementById('btn-next').style.display = 'none';
+                document.getElementById('btn-finish').style.display = 'flex';
+            } else {
+                document.getElementById('btn-next').style.display = 'flex';
+                document.getElementById('btn-finish').style.display = 'none';
+            }
+
+            renderGrid();
+        }
+
+        function selectOption(qId, optIdx) {
+            answers[qId] = optIdx;
+            renderQuestion();
+        }
+
+        function toggleFlag() {
+            const qId = questions[currentIdx].id;
+            flagged[qId] = !flagged[qId];
+            renderQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentIdx < questions.length - 1) {
+                currentIdx++;
+                renderQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIdx > 0) {
+                currentIdx--;
+                renderQuestion();
+            }
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('question-grid');
+            grid.innerHTML = '';
+            let answeredCount = 0;
+
+            questions.forEach((q, idx) => {
+                const isAnswered = answers[q.id] !== undefined;
+                const isFlagged = flagged[q.id];
+                const isActive = currentIdx === idx;
+
+                if (isAnswered) answeredCount++;
+
+                let btnClass = "grid-btn";
+                if (isActive) btnClass += " active";
+                else if (isFlagged) btnClass += " flagged";
+                else if (isAnswered) btnClass += " answered";
+                else btnClass += " default";
+
+                const btn = document.createElement('button');
+                btn.className = btnClass;
+                btn.onclick = () => { currentIdx = idx; renderQuestion(); };
+                btn.innerHTML = `
+                    ${idx + 1}
+                    ${isFlagged ? '<div class="indicator-dot flag-dot"></div>' : ''}
+                `;
+                grid.appendChild(btn);
+            });
+
+            document.getElementById('progress-text').innerText = `${answeredCount} / ${questions.length} Dijawab`;
+        }
+
+        function finishExam() {
+            Swal.fire({
+                title: 'Selesai Ujian?',
+                text: 'Apakah Anda yakin ingin menyelesaikan ujian ini? Jawaban tidak dapat diubah lagi.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Selesai Sekarang',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Logic submit here
+                    Swal.fire('Berhasil', 'Jawaban berhasil disimpan!', 'success').then(() => {
+                        window.location.href = '<?= url("student/history") ?>';
+                    });
+                }
+            });
+        }
+
+        function toggleNav() {
+            const sidebar = document.getElementById('exam-sidebar');
+            const toggleText = document.getElementById('nav-toggle-text');
+            if (sidebar.classList.contains('nav-closed')) {
+                sidebar.classList.remove('nav-closed');
+                sidebar.classList.add('nav-open');
+                toggleText.innerText = 'Tutup Peta Navigasi Soal';
+            } else {
+                sidebar.classList.remove('nav-open');
+                sidebar.classList.add('nav-closed');
+                toggleText.innerText = 'Lihat Peta Navigasi Soal';
+            }
+        }
+
+        // Timer
+        const timerElement = document.getElementById('time-left');
+        const timerContainer = document.getElementById('timer-container');
         setInterval(() => {
-            if(remainingSeconds > 0) remainingSeconds--;
-            let h = Math.floor(remainingSeconds / 3600).toString().padStart(2, '0');
-            let m = Math.floor((remainingSeconds % 3600) / 60).toString().padStart(2, '0');
-            let s = (remainingSeconds % 60).toString().padStart(2, '0');
-            document.getElementById('time-display').innerText = `${h}:${m}:${s}`;
+            if (timeLeft <= 0) return;
+            timeLeft--;
+            
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            timerElement.innerText = `${m}:${s}`;
+            
+            if (timeLeft < 300) {
+                timerContainer.classList.add('timer-warning');
+            }
+            if (timeLeft === 0) {
+                // Time up logic
+                Swal.fire('Waktu Habis', 'Ujian Anda akan dikumpulkan otomatis.', 'info').then(() => {
+                    window.location.href = '<?= url("student/history") ?>';
+                });
+            }
         }, 1000);
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderQuestion();
+        });
     </script>
 </body>
 </html>
