@@ -40,4 +40,17 @@ class StudentController extends Controller {
         ];
         $this->view('student/history', $data);
     }
+    public function exam_start($id = null) {
+        if (!$id) $this->redirect('student/exams');
+        
+        $exam = $this->model('Exam')->getById($id) ?? (object)['title' => 'Simulasi Ujian', 'subject_name' => 'Simulasi', 'duration_minutes' => 60];
+
+        $data = [
+            'title' => 'Mengerjakan Ujian - ' . APP_NAME,
+            'exam' => $exam
+        ];
+        
+        // Render view langsung tanpa layout biasa karena ujian punya layout sendiri
+        $this->view('student/exam_start', $data);
+    }
 }

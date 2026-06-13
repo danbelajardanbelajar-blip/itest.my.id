@@ -30,4 +30,14 @@ class Exam {
         $this->db->bind(':student_id', $studentId);
         return $this->db->resultSet();
     }
+
+    public function getById($id) {
+        $this->db->query("SELECT e.*, s.name as subject_name, c.name as class_name 
+                          FROM exams e
+                          LEFT JOIN subjects s ON e.subject_id = s.id
+                          LEFT JOIN classes c ON e.class_id = c.id
+                          WHERE e.id = :id");
+        $this->db->bind(':id', $id);
+        return $this->db->single();
+    }
 }

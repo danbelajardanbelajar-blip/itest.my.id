@@ -19,7 +19,9 @@ class Controller {
             // Jika bukan AJAX (reload langsung), kita kembalikan beserta layout-nya
             // Tentukan layout berdasarkan direktori view
             $layout = 'app/views/layouts/auth.php'; // default
-            if (strpos($view, 'admin/') === 0) {
+            if ($view === 'student/exam_start') {
+                $layout = null; // No layout for exam_start, it has its own HTML
+            } elseif (strpos($view, 'admin/') === 0) {
                 $layout = 'app/views/layouts/admin.php';
             } elseif (strpos($view, 'student/') === 0) {
                 $layout = 'app/views/layouts/student.php';
@@ -35,7 +37,7 @@ class Controller {
             }
 
             // Render layout yang sudah disuntikkan konten
-            if (file_exists($layout)) {
+            if ($layout && file_exists($layout)) {
                 require_once $layout;
             } else {
                 echo $content;
