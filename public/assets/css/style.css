@@ -1,0 +1,108 @@
+/* General Styles for SPA */
+body {
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+}
+
+#app-content {
+    min-height: calc(100vh - 60px);
+    transition: opacity 0.2s ease-in-out;
+}
+
+/* Page Loader */
+.page-loader {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,0.8);
+    z-index: 9999;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Sidebar Layout */
+.wrapper {
+    display: flex;
+    width: 100%;
+}
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #343a40;
+    color: #fff;
+    position: fixed;
+    overflow-y: auto;
+}
+.sidebar .nav-link {
+    color: #c2c7d0;
+}
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    color: #fff;
+    background: rgba(255,255,255,0.1);
+}
+.main-panel {
+    width: calc(100% - 250px);
+    margin-left: 250px;
+    min-height: 100vh;
+}
+
+/* Exam Interface */
+.exam-header {
+    background: #fff;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+.question-nav-btn {
+    width: 40px;
+    height: 40px;
+    margin: 3px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #fff;
+}
+.question-nav-btn.answered {
+    background: #198754;
+    color: #fff;
+    border-color: #198754;
+}
+.question-nav-btn.doubtful {
+    background: #ffc107;
+    color: #000;
+    border-color: #ffc107;
+}
+.question-nav-btn.active {
+    border: 2px solid #0d6efd;
+    font-weight: bold;
+}
+
+/* Auth Layout */
+.auth-wrapper {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9ecef;
+}
+.auth-card {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        left: -250px;
+        transition: 0.3s;
+    }
+    .sidebar.show {
+        left: 0;
+    }
+    .main-panel {
+        width: 100%;
+        margin-left: 0;
+    }
+}
