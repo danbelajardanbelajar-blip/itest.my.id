@@ -5,7 +5,7 @@ function url($path = '') {
 }
 
 function asset($path = '') {
-    return BASE_URL . 'public/' . ltrim($path, '/');
+    return BASE_URL . 'public/assets/' . ltrim($path, '/');
 }
 
 function e($string) {
