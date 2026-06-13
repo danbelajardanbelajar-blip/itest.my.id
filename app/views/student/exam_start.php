@@ -109,41 +109,89 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Dummy data for testing UI - will be replaced with real data later
-        const questions = [
-            { id: 1, text: "Apa ibukota Indonesia?", options: ["Jakarta", "Bandung", "Surabaya", "Medan"], type: "multiple_choice" },
-            { id: 2, text: "Berapa hasil 5 + 5?", options: ["8", "9", "10", "11"], type: "multiple_choice" },
-            { id: 3, text: "Siapa penemu lampu pijar?", options: ["Thomas Edison", "Nikola Tesla", "Albert Einstein", "Isaac Newton"], type: "multiple_choice" }
-        ];
-
+        const examId = <?= $exam->id ?>;
+        let questions = [];
         let currentIdx = 0;
         let answers = {};
         let flagged = {};
-        let timeLeft = <?= isset($exam->duration_minutes) ? $exam->duration_minutes * 60 : 3600 ?>;
-        
+        let timeLeft = 0;
+        let timerInterval;
+
+        // Fetch Questions from API
+        async function loadExamData() {
+            try {
+                Swal.fire({
+                    title: 'Memuat Soal...',
+                    allowOutsideClick: false,
+                    didOpen: () => { Swal.showLoading() }
+                });
+
+                const res = await fetch('<?= url('student/getQuestions/') ?>' + examId);
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    questions = data.questions;
+                    timeLeft = data.remaining_seconds;
+                    
+                    // Initialize state from server
+                    questions.forEach(q => {
+                        if (q.selected_option_id) {
+                            const optIdx = q.options.findIndex(o => o.id == q.selected_option_id);
+                            if (optIdx !== -1) answers[q.id] = { idx: optIdx, id: q.selected_option_id };
+                        }
+                        if (q.is_flagged) {
+                            flagged[q.id] = true;
+                        }
+                    });
+
+                    Swal.close();
+                    if (questions.length > 0) {
+                        renderQuestion();
+                        startTimer();
+                    } else {
+                        Swal.fire('Error', 'Belum ada soal untuk ujian ini.', 'error');
+                    }
+                } else {
+                    Swal.fire('Error', data.message || 'Gagal memuat soal', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire('Error', 'Terjadi kesalahan jaringan', 'error');
+            }
+        }
+
         function renderQuestion() {
             if (questions.length === 0) return;
             const q = questions[currentIdx];
             document.getElementById('question-number').innerText = `Soal No. ${currentIdx + 1}`;
-            document.getElementById('question-text').innerText = q.text;
+            document.getElementById('question-text').innerHTML = q.text.replace(/\n/g, '<br>');
+            
+            // Image
+            const imgContainer = document.getElementById('question-image');
+            if (q.image) {
+                imgContainer.style.display = 'block';
+                imgContainer.querySelector('img').src = q.image;
+            } else {
+                imgContainer.style.display = 'none';
+            }
             
             // Render Options
             const optionsList = document.getElementById('options-list');
             optionsList.innerHTML = '';
             
             q.options.forEach((opt, idx) => {
-                const isSelected = answers[q.id] === idx;
+                const isSelected = answers[q.id] && answers[q.id].idx === idx;
                 const optionLabel = String.fromCharCode(65 + idx);
                 
                 const div = document.createElement('div');
                 div.className = `option-item ${isSelected ? 'selected' : ''}`;
                 div.style.alignItems = 'flex-start';
-                div.onclick = () => selectOption(q.id, idx);
+                div.onclick = () => selectOption(q.id, idx, opt.id);
                 
                 div.innerHTML = `
                     <div class="option-label">${optionLabel}</div>
                     <div class="option-text" style="flex: 1; display: flex; flex-direction: column;">
-                        <div>${opt}</div>
+                        <div>${opt.text}</div>
                     </div>
                     ${isSelected ? '<i class="fas fa-check-circle check-icon"></i>' : ''}
                 `;
@@ -174,15 +222,43 @@
             renderGrid();
         }
 
-        function selectOption(qId, optIdx) {
-            answers[qId] = optIdx;
+        async function selectOption(qId, optIdx, optionId) {
+            answers[qId] = { idx: optIdx, id: optionId };
             renderQuestion();
+
+            // Background save API
+            const formData = new FormData();
+            formData.append('exam_id', examId);
+            formData.append('question_id', qId);
+            formData.append('choice_id', optionId);
+
+            try {
+                await fetch('<?= url('student/saveAnswer') ?>', {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch (err) {
+                console.error("Failed to auto-save answer");
+            }
         }
 
-        function toggleFlag() {
+        async function toggleFlag() {
             const qId = questions[currentIdx].id;
             flagged[qId] = !flagged[qId];
             renderQuestion();
+
+            // Background flag save API
+            const formData = new FormData();
+            formData.append('exam_id', examId);
+            formData.append('question_id', qId);
+            formData.append('is_doubtful', flagged[qId]);
+
+            try {
+                await fetch('<?= url('student/setFlag') ?>', {
+                    method: 'POST',
+                    body: formData
+                });
+            } catch(err) {}
         }
 
         function nextQuestion() {
@@ -240,12 +316,34 @@
                 cancelButtonText: 'Batal'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Logic submit here
-                    Swal.fire('Berhasil', 'Jawaban berhasil disimpan!', 'success').then(() => {
-                        window.location.href = '<?= url("student/history") ?>';
-                    });
+                    submitExamData();
                 }
             });
+        }
+
+        async function submitExamData() {
+            Swal.fire({ title: 'Menyimpan Ujian...', allowOutsideClick: false, didOpen: () => { Swal.showLoading() } });
+            
+            const formData = new FormData();
+            formData.append('exam_id', examId);
+            
+            try {
+                const res = await fetch('<?= url('student/finishExam') ?>', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    Swal.fire('Selesai', 'Ujian berhasil disimpan!', 'success').then(() => {
+                        window.location.href = data.redirect;
+                    });
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            } catch(e) {
+                Swal.fire('Error', 'Terjadi kesalahan saat submit.', 'error');
+            }
         }
 
         function toggleNav() {
@@ -262,31 +360,53 @@
             }
         }
 
-        // Timer
-        const timerElement = document.getElementById('time-left');
-        const timerContainer = document.getElementById('timer-container');
-        setInterval(() => {
-            if (timeLeft <= 0) return;
-            timeLeft--;
+        // Timer Logic
+        function startTimer() {
+            const timerElement = document.getElementById('time-left');
+            const timerContainer = document.getElementById('timer-container');
             
-            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
-            const s = (timeLeft % 60).toString().padStart(2, '0');
-            timerElement.innerText = `${m}:${s}`;
+            let syncCounter = 0;
             
-            if (timeLeft < 300) {
-                timerContainer.classList.add('timer-warning');
-            }
-            if (timeLeft === 0) {
-                // Time up logic
-                Swal.fire('Waktu Habis', 'Ujian Anda akan dikumpulkan otomatis.', 'info').then(() => {
-                    window.location.href = '<?= url("student/history") ?>';
-                });
-            }
-        }, 1000);
+            timerInterval = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    Swal.fire('Waktu Habis', 'Ujian Anda akan dikumpulkan otomatis.', 'info').then(() => {
+                        submitExamData();
+                    });
+                    return;
+                }
+                
+                timeLeft--;
+                syncCounter++;
+                
+                // Sync with server every 30 seconds
+                if (syncCounter >= 30) {
+                    syncCounter = 0;
+                    const fd = new FormData();
+                    fd.append('exam_id', examId);
+                    fd.append('remaining', timeLeft);
+                    fetch('<?= url('student/updateTimer') ?>', { method: 'POST', body: fd }).catch(e=>e);
+                }
+                
+                const h = Math.floor(timeLeft / 3600);
+                const m = Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0');
+                const s = (timeLeft % 60).toString().padStart(2, '0');
+                
+                if (h > 0) {
+                    timerElement.innerText = `${h}:${m}:${s}`;
+                } else {
+                    timerElement.innerText = `${m}:${s}`;
+                }
+                
+                if (timeLeft < 300) {
+                    timerContainer.classList.add('timer-warning');
+                }
+            }, 1000);
+        }
 
         // Init
         document.addEventListener('DOMContentLoaded', () => {
-            renderQuestion();
+            loadExamData();
         });
     </script>
 </body>

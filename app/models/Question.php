@@ -57,4 +57,41 @@ class Question {
         $this->db->bind(':id', $id);
         return $this->db->execute(); // Cascade will handle choices
     }
+
+    public function getForExam($examId) {
+        // Get exam details
+        $this->db->query("SELECT subject_id, class_id, total_questions, random_questions FROM exams WHERE id = :exam_id");
+        $this->db->bind(':exam_id', $examId);
+        $exam = $this->db->single();
+
+        if (!$exam) return [];
+
+        // Build query
+        $query = "SELECT * FROM questions WHERE subject_id = :subject_id";
+        
+        // Match class if exam specifies it
+        if ($exam->class_id) {
+            $query .= " AND (class_id = :class_id OR class_id IS NULL)";
+        }
+
+        // Randomize
+        if ($exam->random_questions) {
+            $query .= " ORDER BY RAND()";
+        } else {
+            $query .= " ORDER BY id ASC";
+        }
+
+        // Limit
+        if ($exam->total_questions > 0) {
+            $query .= " LIMIT " . (int)$exam->total_questions;
+        }
+
+        $this->db->query($query);
+        $this->db->bind(':subject_id', $exam->subject_id);
+        if ($exam->class_id) {
+            $this->db->bind(':class_id', $exam->class_id);
+        }
+
+        return $this->db->resultSet();
+    }
 }
