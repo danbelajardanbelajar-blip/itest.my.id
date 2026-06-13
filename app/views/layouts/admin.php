@@ -3,91 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= isset($title) ? e($title) : APP_NAME ?></title>
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title><?= isset($title) ? e($title) : 'Admin - ' . APP_NAME ?></title>
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/main.css') ?>">
+    <link rel="stylesheet" href="<?= asset('css/admin-dashboard.css') ?>">
 </head>
 <body>
 
-    <div class="wrapper">
-        <!-- Sidebar -->
-        <nav class="sidebar p-3">
-            <h4 class="text-center mb-4 fw-bold text-white"><?= APP_NAME ?></h4>
-            <div class="mb-4 text-center">
-                <img src="<?= asset('img/default-user.png') ?>" alt="Admin" class="rounded-circle mb-2 bg-light" width="80" height="80">
-                <div class="small"><?= e(Auth::user()->name) ?></div>
-                <div class="badge bg-success">Admin</div>
-            </div>
-            
-            <ul class="nav flex-column gap-2">
-                <li class="nav-item">
-                    <a class="nav-link <?= strpos($_SERVER['REQUEST_URI'], 'admin/dashboard') !== false ? 'active' : '' ?>" href="<?= url('admin/dashboard') ?>">
-                        <i class="fas fa-home me-2"></i> Dashboard
-                    </a>
-                </li>
-                <!-- Placeholder menu -->
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= url('admin/users') ?>"><i class="fas fa-users me-2"></i> Pengguna</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= url('admin/questions') ?>"><i class="fas fa-database me-2"></i> Bank Soal</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= url('admin/exams') ?>"><i class="fas fa-edit me-2"></i> Ujian</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<?= url('admin/results') ?>"><i class="fas fa-chart-bar me-2"></i> Hasil Ujian</a>
-                </li>
-                <li class="nav-item mt-4">
-                    <a class="nav-link text-danger no-spa" href="<?= url('auth/logout') ?>">
-                        <i class="fas fa-sign-out-alt me-2"></i> Logout
-                    </a>
-                </li>
-            </ul>
-        </nav>
+    <div class="admin-container">
+        <!-- Background -->
+        <div class="admin-background">
+            <div class="blob blob-admin-1"></div>
+            <div class="blob blob-admin-2"></div>
+        </div>
 
-        <!-- Main Content -->
-        <div class="main-panel">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom px-4 py-3">
-                <div class="container-fluid">
-                    <button class="btn btn-light d-md-none me-3" id="sidebarToggle">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                    <span class="navbar-brand mb-0 h1">Administrator</span>
+        <!-- Sidebar Navigation -->
+        <div class="mobile-sidebar-overlay hide-on-desktop" style="display: none;" onclick="document.querySelector('.admin-sidebar').classList.remove('mobile-open'); this.style.display='none';"></div>
+        
+        <aside class="admin-sidebar glass-panel">
+            <div class="sidebar-brand flex-between">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="logo-container sm admin-logo" style="width: 36px; height: 36px;">
+                        <i class="fas fa-chart-pie logo-icon white" style="font-size: 1.2rem;"></i>
+                    </div>
+                    <h2>AdminPanel</h2>
                 </div>
+                <button class="mobile-menu-close hide-on-desktop" onclick="document.querySelector('.admin-sidebar').classList.remove('mobile-open'); document.querySelector('.mobile-sidebar-overlay').style.display='none';" style="background: none; border: none; color: white;">
+                    <i class="fas fa-times" style="font-size: 1.5rem;"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <?php $currentUri = $_SERVER['REQUEST_URI'] ?? ''; ?>
+                
+                <button class="nav-item <?= strpos($currentUri, 'admin/dashboard') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/dashboard') ?>')">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </button>
+
+                <button class="nav-item <?= strpos($currentUri, 'admin/exams') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/exams') ?>')">
+                    <i class="fas fa-book-open"></i>
+                    <span>Manajemen Ujian</span>
+                </button>
+
+                <button class="nav-item <?= strpos($currentUri, 'admin/questions') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/questions') ?>')">
+                    <i class="fas fa-database"></i>
+                    <span>Bank Soal</span>
+                </button>
+
+                <button class="nav-item <?= strpos($currentUri, 'admin/results') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/results') ?>')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Laporan Nilai</span>
+                </button>
+
+                <button class="nav-item <?= strpos($currentUri, 'admin/users') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/users') ?>')">
+                    <i class="fas fa-users"></i>
+                    <span>Manajemen Siswa</span>
+                </button>
+
+                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/staff') ?>')">
+                    <i class="fas fa-user-shield"></i>
+                    <span>Manajemen Pegawai</span>
+                </button>
+
+                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/schools') ?>')">
+                    <i class="fas fa-building"></i>
+                    <span>Data Lembaga</span>
+                </button>
+
+                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/rooms') ?>')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Data Ruangan</span>
+                </button>
+
+                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/classes') ?>')">
+                    <i class="fas fa-chalkboard"></i>
+                    <span>Data Kelas</span>
+                </button>
+
+                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/settings') ?>')">
+                    <i class="fas fa-cog"></i>
+                    <span>Pengaturan</span>
+                </button>
             </nav>
 
-            <div class="p-4" id="app-content">
+            <div class="sidebar-footer">
+                <div class="admin-profile" onclick="window.router.navigate('<?= url('admin/settings') ?>')" style="cursor: pointer;" title="Buka Pengaturan Akun">
+                    <div class="admin-avatar" style="overflow: hidden;">
+                        <span class="avatar-initials"><?= strtoupper(substr(Auth::user()->name ?? 'AD', 0, 2)) ?></span>
+                    </div>
+                    <div class="admin-info">
+                        <span class="admin-name"><?= e(Auth::user()->name ?? 'Admin') ?></span>
+                        <span class="admin-role"><?= strtoupper(Auth::user()->role ?? 'ADMIN') ?></span>
+                    </div>
+                </div>
+                <a href="<?= url('auth/logout') ?>" class="logout-button admin-logout no-spa" title="Keluar" style="text-decoration: none;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Keluar</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="admin-main">
+            <!-- Topbar -->
+            <header class="admin-topbar glass-panel">
+                <div style="display: flex; gap: 12px; align-items: center; width: 100%;">
+                    <button class="mobile-menu-toggle btn-secondary-admin hide-on-desktop" onclick="document.querySelector('.admin-sidebar').classList.add('mobile-open'); document.querySelector('.mobile-sidebar-overlay').style.display='block';">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="search-bar" style="flex: 1;">
+                        <i class="fas fa-search search-icon"></i>
+                        <input type="text" placeholder="Cari data siswa, ujian, staf..." id="global-search">
+                    </div>
+                </div>
+                <div class="topbar-actions">
+                    <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/exams/create') ?>')">
+                        <i class="fas fa-plus"></i>
+                        <span>Buat Ujian Baru</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- SPA Content Container -->
+            <div id="app-content" style="flex: 1; overflow-y: auto; overflow-x: hidden; min-height: 100%;">
                 <?= $content ?>
             </div>
-        </div>
+            
+        </main>
     </div>
 
     <!-- Page Loader -->
-    <div id="page-loader" class="page-loader">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-        </div>
+    <div id="page-loader" class="page-loader" style="display: none;">
+        <div class="loader"></div>
     </div>
 
-    <!-- Scripts -->
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Custom JS -->
     <script src="<?= asset('js/router.js') ?>"></script>
     <script src="<?= asset('js/app.js') ?>"></script>
-    <script>
-        document.getElementById('sidebarToggle')?.addEventListener('click', () => {
-            document.querySelector('.sidebar').classList.toggle('show');
-        });
-    </script>
 </body>
 </html>

@@ -11,12 +11,14 @@ class AdminController extends Controller {
     }
 
     public function dashboard() {
-        // Fetch some basic stats (Placeholder)
+        $exams = $this->model('Exam')->getAll();
+        
         $data = [
             'title' => 'Dashboard Admin - ' . APP_NAME,
             'total_students' => count($this->model('Student')->getAll()),
-            'total_exams' => count($this->model('Exam')->getAll()),
-            'active_exams' => 1
+            'total_exams' => count($exams),
+            'avg_score' => 0.0, // Placeholder
+            'recent_exams' => array_slice($exams, 0, 5) // Ambil 5 ujian terbaru
         ];
 
         $this->view('admin/dashboard', $data);
