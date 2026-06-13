@@ -99,5 +99,5 @@ class Router {
 
 // Initialize Router when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.appRouter = new Router();
+    window.router = new Router();
 });
