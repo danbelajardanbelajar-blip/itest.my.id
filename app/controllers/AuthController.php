@@ -3,8 +3,7 @@
 class AuthController extends Controller {
 
     public function __construct() {
-        // Cek redirect jika sudah login
-        Middleware::requireGuest();
+        // Constructor kosong, pemindahan middleware ke method spesifik
     }
 
     public function index() {
@@ -13,6 +12,9 @@ class AuthController extends Controller {
     }
 
     public function login() {
+        // Cek redirect jika sudah login
+        Middleware::requireGuest();
+        
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $username = $_POST['username'] ?? '';
             $password = $_POST['password'] ?? '';
