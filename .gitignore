@@ -1,0 +1,36 @@
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE / Editors #
+#################
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Vendor / Composer #
+#####################
+vendor/
+
+# Log files #
+#############
+*.log
+
+# Application Uploads #
+#######################
+public/uploads/questions/*
+!public/uploads/questions/.gitkeep
+public/uploads/users/*
+!public/uploads/users/.gitkeep
+public/uploads/imports/*
+!public/uploads/imports/.gitkeep
+
+# Ignore temporary hash file if any #
+hash.php
