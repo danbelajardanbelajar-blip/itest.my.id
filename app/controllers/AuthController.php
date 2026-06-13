@@ -8,8 +8,8 @@ class AuthController extends Controller {
     }
 
     public function index() {
-        // Method alias for login page
-        $this->view('auth/login', ['title' => 'Login - ' . APP_NAME]);
+        // Alias index ke method login agar /login (POST) bisa diproses dengan benar
+        $this->login();
     }
 
     public function login() {
