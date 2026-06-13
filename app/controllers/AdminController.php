@@ -85,6 +85,7 @@ class AdminController extends Controller {
     public function staff() {
         $data = [
             'title' => 'Manajemen Pegawai - ' . APP_NAME,
+            'staff' => $this->model('Teacher')->getAll()
         ];
         $this->view('admin/staff', $data);
     }
@@ -92,6 +93,7 @@ class AdminController extends Controller {
     public function schools() {
         $data = [
             'title' => 'Data Lembaga - ' . APP_NAME,
+            'schools' => $this->model('School')->getAll()
         ];
         $this->view('admin/schools', $data);
     }
@@ -99,6 +101,7 @@ class AdminController extends Controller {
     public function rooms() {
         $data = [
             'title' => 'Data Ruangan - ' . APP_NAME,
+            'rooms' => $this->model('Room')->getAll()
         ];
         $this->view('admin/rooms', $data);
     }
@@ -106,6 +109,7 @@ class AdminController extends Controller {
     public function classes() {
         $data = [
             'title' => 'Data Kelas - ' . APP_NAME,
+            'classes' => $this->model('ClassModel')->getAll()
         ];
         $this->view('admin/classes', $data);
     }
@@ -389,5 +393,184 @@ class AdminController extends Controller {
         header('Content-Disposition: attachment; filename="' . urlencode($filename) . '"');
         $writer->save('php://output');
         exit;
+    }
+    // --- CRUD ENDPOINTS ---
+
+    // Classes
+    public function create_class() {
+        $data = [
+            'title' => 'Tambah Kelas - ' . APP_NAME,
+            'teachers' => $this->model('Teacher')->getAll()
+        ];
+        $this->view('admin/classes_create', $data);
+    }
+    public function storeClass() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('ClassModel')->create($_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Kelas berhasil ditambahkan', 'spa_redirect' => url('admin/classes')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menambahkan kelas']);
+            }
+        }
+    }
+    public function editClass($id) {
+        $class = $this->model('ClassModel')->getById($id);
+        if (!$class) $this->redirect('admin/classes');
+        $data = [
+            'title' => 'Edit Kelas - ' . APP_NAME,
+            'class' => $class,
+            'teachers' => $this->model('Teacher')->getAll()
+        ];
+        $this->view('admin/classes_edit', $data);
+    }
+    public function updateClass($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('ClassModel')->update($id, $_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Kelas berhasil diperbarui', 'redirect' => url('admin/classes')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui kelas']);
+            }
+        }
+    }
+    public function deleteClass($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('ClassModel')->delete($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Kelas berhasil dihapus', 'spa_reload' => true]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus kelas']);
+            }
+        }
+    }
+
+    // Staff
+    public function create_staff() {
+        $data = [
+            'title' => 'Tambah Pegawai - ' . APP_NAME
+        ];
+        $this->view('admin/staff_create', $data);
+    }
+    public function storeStaff() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('Teacher')->create($_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Pegawai berhasil ditambahkan', 'spa_redirect' => url('admin/staff')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menambahkan pegawai']);
+            }
+        }
+    }
+    public function editStaff($id) {
+        $staff = $this->model('Teacher')->getById($id);
+        if (!$staff) $this->redirect('admin/staff');
+        $data = [
+            'title' => 'Edit Pegawai - ' . APP_NAME,
+            'staff' => $staff
+        ];
+        $this->view('admin/staff_edit', $data);
+    }
+    public function updateStaff($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('Teacher')->update($id, $_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Pegawai berhasil diperbarui', 'redirect' => url('admin/staff')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui pegawai']);
+            }
+        }
+    }
+    public function deleteStaff($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('Teacher')->delete($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Pegawai berhasil dihapus', 'spa_reload' => true]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus pegawai']);
+            }
+        }
+    }
+
+    // Rooms
+    public function create_room() {
+        $data = [
+            'title' => 'Tambah Ruangan - ' . APP_NAME
+        ];
+        $this->view('admin/rooms_create', $data);
+    }
+    public function storeRoom() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('Room')->create($_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Ruangan berhasil ditambahkan', 'spa_redirect' => url('admin/rooms')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menambahkan ruangan']);
+            }
+        }
+    }
+    public function editRoom($id) {
+        $room = $this->model('Room')->getById($id);
+        if (!$room) $this->redirect('admin/rooms');
+        $data = [
+            'title' => 'Edit Ruangan - ' . APP_NAME,
+            'room' => $room
+        ];
+        $this->view('admin/rooms_edit', $data);
+    }
+    public function updateRoom($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('Room')->update($id, $_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Ruangan berhasil diperbarui', 'redirect' => url('admin/rooms')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui ruangan']);
+            }
+        }
+    }
+    public function deleteRoom($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('Room')->delete($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Ruangan berhasil dihapus', 'spa_reload' => true]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus ruangan']);
+            }
+        }
+    }
+
+    // Schools
+    public function create_school() {
+        $data = [
+            'title' => 'Tambah Lembaga - ' . APP_NAME
+        ];
+        $this->view('admin/schools_create', $data);
+    }
+    public function storeSchool() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('School')->create($_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Lembaga berhasil ditambahkan', 'spa_redirect' => url('admin/schools')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menambahkan lembaga']);
+            }
+        }
+    }
+    public function editSchool($id) {
+        $school = $this->model('School')->getById($id);
+        if (!$school) $this->redirect('admin/schools');
+        $data = [
+            'title' => 'Edit Lembaga - ' . APP_NAME,
+            'school' => $school
+        ];
+        $this->view('admin/schools_edit', $data);
+    }
+    public function updateSchool($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('School')->update($id, $_POST)) {
+                echo json_encode(['status' => 'success', 'message' => 'Lembaga berhasil diperbarui', 'redirect' => url('admin/schools')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui lembaga']);
+            }
+        }
+    }
+    public function deleteSchool($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($this->model('School')->delete($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Lembaga berhasil dihapus', 'spa_reload' => true]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus lembaga']);
+            }
+        }
     }
 }
