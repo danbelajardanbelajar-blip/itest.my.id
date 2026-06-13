@@ -34,12 +34,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(() => {
-                            if (result.redirect) {
-                                window.location.href = result.redirect; // Full reload for auth changes
+                            if (result.spa_redirect && window.router) {
+                                window.router.navigate(result.spa_redirect);
+                            } else if (result.spa_reload && window.router) {
+                                window.router.navigate(window.location.pathname);
+                            } else if (result.redirect) {
+                                window.location.href = result.redirect; // Full reload
                             }
                         });
-                    } else if (result.redirect) {
-                        window.location.href = result.redirect;
+                    } else {
+                        if (result.spa_redirect && window.router) {
+                            window.router.navigate(result.spa_redirect);
+                        } else if (result.spa_reload && window.router) {
+                            window.router.navigate(window.location.pathname);
+                        } else if (result.redirect) {
+                            window.location.href = result.redirect;
+                        }
                     }
                 } else {
                     Swal.fire('Error', result.message || 'Terjadi kesalahan', 'error');
@@ -55,5 +65,45 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Global delete handler
+    window.deleteItem = function(url, title = 'Hapus Data?') {
+        Swal.fire({
+            title: title,
+            text: 'Data yang dihapus tidak dapat dikembalikan!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    const res = await response.json();
+                    
+                    if (res.status === 'success') {
+                        Swal.fire('Terhapus!', res.message, 'success').then(() => {
+                            if (window.router) {
+                                window.router.navigate(window.location.pathname);
+                            } else {
+                                window.location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire('Error', res.message || 'Gagal menghapus data', 'error');
+                    }
+                } catch (e) {
+                    Swal.fire('Error', 'Terjadi kesalahan koneksi', 'error');
+                }
+            }
+        });
+    };
 
 });

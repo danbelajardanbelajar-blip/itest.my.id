@@ -61,20 +61,6 @@
 
 <script>
 function deleteExam(id) {
-    Swal.fire({
-        title: 'Hapus Ujian?',
-        text: 'Data ujian ini tidak dapat dikembalikan.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Placeholder: Call API to delete exam
-            Swal.fire('Terhapus!', 'Ujian telah dihapus.', 'success').then(() => {
-                window.location.reload();
-            });
-        }
-    });
+    window.deleteItem('<?= url('admin/deleteExam/') ?>' + id, 'Hapus Ujian?');
 }
 </script>

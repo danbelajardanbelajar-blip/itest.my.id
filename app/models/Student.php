@@ -27,4 +27,36 @@ class Student {
         $this->db->bind(':id', $id);
         return $this->db->single();
     }
+
+    public function create($data) {
+        try {
+            $this->db->query("INSERT INTO users (name, username, email, password, role, status) VALUES (:name, :username, :email, :password, 'student', 'active')");
+            $this->db->bind(':name', $data['name']);
+            $this->db->bind(':username', $data['nis']); // Default username is NIS
+            $this->db->bind(':email', $data['nis'] . '@student.com'); // Placeholder email
+            $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
+            $this->db->execute();
+
+            $userId = $this->db->lastInsertId();
+
+            $this->db->query("INSERT INTO students (user_id, nis, class_id, gender) VALUES (:user_id, :nis, :class_id, :gender)");
+            $this->db->bind(':user_id', $userId);
+            $this->db->bind(':nis', $data['nis']);
+            $this->db->bind(':class_id', $data['class_id'] ?? null);
+            $this->db->bind(':gender', $data['gender'] ?? 'L');
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function delete($id) {
+        $student = $this->getById($id);
+        if ($student) {
+            $this->db->query("DELETE FROM users WHERE id = :user_id");
+            $this->db->bind(':user_id', $student->user_id);
+            return $this->db->execute(); // Cascade will handle student record
+        }
+        return false;
+    }
 }

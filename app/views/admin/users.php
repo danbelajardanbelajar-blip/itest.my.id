@@ -73,18 +73,6 @@
 
 <script>
 function deleteStudent(id) {
-    Swal.fire({
-        title: 'Hapus Siswa?',
-        text: 'Data siswa ini tidak dapat dikembalikan.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire('Terhapus!', 'Data siswa telah dihapus.', 'success');
-            // TODO: Call API
-        }
-    });
+    window.deleteItem('<?= url('admin/deleteStudent/') ?>' + id, 'Hapus Siswa?');
 }
 </script>

@@ -48,7 +48,7 @@
                                             <span style="font-size: 0.75rem; padding: 2px 8px; background: rgba(16,185,129,0.2); color: #34d399; border-radius: 6px;"><?= e($q->class_name) ?></span>
                                         <?php endif; ?>
                                     </div>
-                                    <p style="margin: 0; color: var(--text-light); font-weight: 500; font-size: 0.95rem;"><?= nl2br(e($q->text)) ?></p>
+                                    <p style="margin: 0; color: var(--text-light); font-weight: 500; font-size: 0.95rem;"><?= nl2br(e($q->question_text)) ?></p>
                                 </td>
                                 <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
                                     <?php 
@@ -83,18 +83,6 @@
 
 <script>
 function deleteQuestion(id) {
-    Swal.fire({
-        title: 'Hapus Soal?',
-        text: 'Soal akan dihapus secara permanen.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Hapus',
-        cancelButtonText: 'Batal'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire('Terhapus!', 'Soal telah dihapus.', 'success');
-            // TODO: Call API
-        }
-    });
+    window.deleteItem('<?= url('admin/deleteQuestion/') ?>' + id, 'Hapus Soal?');
 }
 </script>

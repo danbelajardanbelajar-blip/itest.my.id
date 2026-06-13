@@ -40,4 +40,30 @@ class Exam {
         $this->db->bind(':id', $id);
         return $this->db->single();
     }
+
+    public function create($data) {
+        try {
+            $this->db->query("INSERT INTO exams (title, subject_id, class_id, start_time, end_time, duration_minutes, total_questions, passing_score, status) 
+                              VALUES (:title, :subject_id, :class_id, :start_time, :end_time, :duration_minutes, :total_questions, :passing_score, :status)");
+            $this->db->bind(':title', $data['title']);
+            $this->db->bind(':subject_id', $data['subject_id']);
+            $this->db->bind(':class_id', $data['class_id'] ?? null);
+            $this->db->bind(':start_time', $data['start_time']);
+            $this->db->bind(':end_time', $data['end_time']);
+            $this->db->bind(':duration_minutes', $data['duration_minutes']);
+            $this->db->bind(':total_questions', $data['total_questions'] ?? 0);
+            $this->db->bind(':passing_score', $data['passing_score'] ?? 0);
+            $this->db->bind(':status', $data['status'] ?? 'draft');
+            
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    public function delete($id) {
+        $this->db->query("DELETE FROM exams WHERE id = :id");
+        $this->db->bind(':id', $id);
+        return $this->db->execute(); // Cascade will handle related tables
+    }
 }
