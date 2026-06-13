@@ -54,4 +54,32 @@ class AdminController extends Controller {
         ];
         $this->view('admin/results', $data);
     }
+
+    public function staff() {
+        $data = [
+            'title' => 'Manajemen Pegawai - ' . APP_NAME,
+        ];
+        $this->view('admin/staff', $data);
+    }
+
+    public function schools() {
+        $data = [
+            'title' => 'Data Lembaga - ' . APP_NAME,
+        ];
+        $this->view('admin/schools', $data);
+    }
+
+    public function rooms() {
+        $data = [
+            'title' => 'Data Ruangan - ' . APP_NAME,
+        ];
+        $this->view('admin/rooms', $data);
+    }
+
+    public function classes() {
+        $data = [
+            'title' => 'Data Kelas - ' . APP_NAME,
+        ];
+        $this->view('admin/classes', $data);
+    }
 }

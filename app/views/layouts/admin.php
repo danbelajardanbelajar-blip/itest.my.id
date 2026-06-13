@@ -64,27 +64,27 @@
                     <span>Manajemen Siswa</span>
                 </button>
 
-                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/staff') ?>')">
+                <button class="nav-item <?= strpos($currentUri, 'admin/staff') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/staff') ?>')">
                     <i class="fas fa-user-shield"></i>
                     <span>Manajemen Pegawai</span>
                 </button>
 
-                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/schools') ?>')">
+                <button class="nav-item <?= strpos($currentUri, 'admin/schools') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/schools') ?>')">
                     <i class="fas fa-building"></i>
                     <span>Data Lembaga</span>
                 </button>
 
-                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/rooms') ?>')">
+                <button class="nav-item <?= strpos($currentUri, 'admin/rooms') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/rooms') ?>')">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>Data Ruangan</span>
                 </button>
 
-                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/classes') ?>')">
+                <button class="nav-item <?= strpos($currentUri, 'admin/classes') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/classes') ?>')">
                     <i class="fas fa-chalkboard"></i>
                     <span>Data Kelas</span>
                 </button>
 
-                <button class="nav-item" onclick="window.router.navigate('<?= url('admin/settings') ?>')">
+                <button class="nav-item <?= strpos($currentUri, 'admin/settings') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/settings') ?>')">
                     <i class="fas fa-cog"></i>
                     <span>Pengaturan</span>
                 </button>

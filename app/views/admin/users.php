@@ -1,75 +1,90 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold mb-0">Manajemen Pengguna</h2>
-    <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Tambah Siswa</button>
-</div>
+<div class="dashboard-view fade-in">
+    <div class="view-header flex-between" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div>
+            <h1>Manajemen Siswa</h1>
+            <p>Kelola data siswa yang terdaftar di sistem.</p>
+        </div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="btn-secondary-admin" style="border-color: #10b981; color: #10b981; padding: 10px 16px;" title="Unduh Template Excel">
+                <i class="fas fa-download"></i>
+                <span class="hide-on-mobile">Unduh Template</span>
+            </button>
+            <label class="btn-secondary-admin" style="cursor: pointer; margin: 0; padding: 10px 16px; border-color: #3b82f6; color: #3b82f6;" title="Impor data massal dari Excel">
+                <i class="fas fa-file-excel"></i>
+                <span class="hide-on-mobile">Impor Excel</span>
+                <input type="file" accept=".xlsx, .xls" style="display: none;">
+            </label>
+            <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/users/create') ?>')">
+                <i class="fas fa-plus"></i>
+                <span>Siswa Baru</span>
+            </button>
+        </div>
+    </div>
 
-<div class="card border-0 shadow-sm">
-    <div class="card-body">
-        <ul class="nav nav-tabs mb-4" id="userTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="students-tab" data-bs-toggle="tab" data-bs-target="#students" type="button" role="tab">Siswa</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="admins-tab" data-bs-toggle="tab" data-bs-target="#admins" type="button" role="tab">Admin</button>
-            </li>
-        </ul>
-        <div class="tab-content" id="userTabsContent">
-            <div class="tab-pane fade show active" id="students" role="tabpanel">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle datatable">
-                        <thead class="table-light">
+    <div class="admin-recent-section glass-panel">
+        <div class="table-responsive">
+            <table class="admin-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">NIS</th>
+                        <th style="text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Nama Lengkap</th>
+                        <th style="text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Kelas</th>
+                        <th style="text-align: left; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Status Akun</th>
+                        <th style="text-align: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); color: var(--text-muted); font-weight: 600; font-size: 0.85rem; text-transform: uppercase;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if(empty($students)): ?>
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 20px; color: var(--text-muted);">Belum ada data siswa.</td>
+                        </tr>
+                    <?php else: ?>
+                        <?php foreach($students as $std): ?>
                             <tr>
-                                <th>No</th>
-                                <th>NIS</th>
-                                <th>Nama Lengkap</th>
-                                <th>Kelas</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php $no = 1; foreach ($students as $student): ?>
-                            <tr>
-                                <td><?= $no++ ?></td>
-                                <td><?= e($student->nis) ?></td>
-                                <td>
-                                    <div class="fw-bold"><?= e($student->name) ?></div>
-                                    <div class="small text-muted"><?= e($student->email) ?></div>
+                                <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-light); font-weight: 600;"><?= e($std->nis) ?></td>
+                                <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-light);"><?= e($std->name) ?></td>
+                                <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--text-light);"><?= e($std->class_name ?? '-') ?></td>
+                                <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                                    <?php
+                                        // Asumsikan semua aktif untuk sekarang, atau jika ada status di DB
+                                        $status = $std->status ?? 'Aktif';
+                                        $statusClass = $status === 'Aktif' ? 'active' : 'draft';
+                                    ?>
+                                    <span class="badge badge-<?= $statusClass ?>" style="padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: <?= $status === 'Aktif' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(239, 68, 68, 0.15)' ?>; color: <?= $status === 'Aktif' ? '#34d399' : '#ef4444' ?>;"><?= e($status) ?></span>
                                 </td>
-                                <td><?= e($student->class_name) ?> - <?= e($student->major_name) ?></td>
-                                <td>
-                                    <?php if($student->status == 'active'): ?>
-                                        <span class="badge bg-success">Aktif</span>
-                                    <?php else: ?>
-                                        <span class="badge bg-danger">Nonaktif</span>
-                                    <?php endif; ?>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-info text-white" title="Edit"><i class="fas fa-edit"></i></button>
-                                    <button class="btn btn-sm btn-warning" title="Reset Password"><i class="fas fa-key"></i></button>
-                                    <button class="btn btn-sm btn-danger" title="Hapus"><i class="fas fa-trash"></i></button>
+                                <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button class="action-btn" onclick="window.router.navigate('<?= url('admin/users/edit/' . $std->id) ?>')" title="Edit" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: #3b82f6; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">
+                                            <i class="fas fa-edit" style="font-size: 14px;"></i>
+                                        </button>
+                                        <button class="action-btn" onclick="deleteStudent(<?= $std->id ?>)" title="Hapus" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: #ef4444; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">
+                                            <i class="fas fa-trash-alt" style="font-size: 14px;"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="admins" role="tabpanel">
-                <p class="text-muted">Data admin akan tampil di sini.</p>
-            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 <script>
-    $(document).ready(function() {
-        if (!$.fn.DataTable.isDataTable('.datatable')) {
-            $('.datatable').DataTable({
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json',
-                }
-            });
+function deleteStudent(id) {
+    Swal.fire({
+        title: 'Hapus Siswa?',
+        text: 'Data siswa ini tidak dapat dikembalikan.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Hapus',
+        cancelButtonText: 'Batal'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire('Terhapus!', 'Data siswa telah dihapus.', 'success');
+            // TODO: Call API
         }
     });
+}
 </script>
