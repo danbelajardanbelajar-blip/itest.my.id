@@ -42,7 +42,7 @@
                                 </td>
                                 <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
                                     <div style="display: flex; gap: 8px; justify-content: center;">
-                                        <button class="action-btn" onclick="window.router.navigate('<?= url('admin/exams/edit/' . $exam->id) ?>')" title="Edit Ujian" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: #3b82f6; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">
+                                        <button class="action-btn" onclick="window.router.navigate('<?= url('admin/editExam/' . $exam->id) ?>')" title="Edit Ujian" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: #3b82f6; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">
                                             <i class="fas fa-edit" style="font-size: 14px;"></i>
                                         </button>
                                         <button class="action-btn" onclick="deleteExam(<?= $exam->id ?>)" title="Hapus Ujian" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: #ef4444; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">

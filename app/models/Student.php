@@ -59,4 +59,33 @@ class Student {
         }
         return false;
     }
+
+    public function update($id, $data) {
+        $student = $this->getById($id);
+        if (!$student) return false;
+
+        try {
+            $this->db->query("UPDATE users SET name = :name, username = :username WHERE id = :user_id");
+            $this->db->bind(':name', $data['name']);
+            $this->db->bind(':username', $data['nis']);
+            $this->db->bind(':user_id', $student->user_id);
+            $this->db->execute();
+
+            if (!empty($data['password'])) {
+                $this->db->query("UPDATE users SET password = :password WHERE id = :user_id");
+                $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
+                $this->db->bind(':user_id', $student->user_id);
+                $this->db->execute();
+            }
+
+            $this->db->query("UPDATE students SET nis = :nis, class_id = :class_id, gender = :gender WHERE id = :id");
+            $this->db->bind(':nis', $data['nis']);
+            $this->db->bind(':class_id', empty($data['class_id']) ? null : $data['class_id']);
+            $this->db->bind(':gender', $data['gender'] ?? 'L');
+            $this->db->bind(':id', $id);
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }

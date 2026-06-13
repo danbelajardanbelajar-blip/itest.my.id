@@ -66,4 +66,25 @@ class Exam {
         $this->db->bind(':id', $id);
         return $this->db->execute(); // Cascade will handle related tables
     }
+
+    public function update($id, $data) {
+        try {
+            $this->db->query("UPDATE exams SET title = :title, subject_id = :subject_id, class_id = :class_id, 
+                              start_time = :start_time, end_time = :end_time, duration_minutes = :duration_minutes, 
+                              passing_score = :passing_score, status = :status WHERE id = :id");
+            $this->db->bind(':title', $data['title']);
+            $this->db->bind(':subject_id', $data['subject_id']);
+            $this->db->bind(':class_id', empty($data['class_id']) ? null : $data['class_id']);
+            $this->db->bind(':start_time', $data['start_time']);
+            $this->db->bind(':end_time', $data['end_time']);
+            $this->db->bind(':duration_minutes', $data['duration_minutes']);
+            $this->db->bind(':passing_score', $data['passing_score'] ?? 0);
+            $this->db->bind(':status', $data['status'] ?? 'draft');
+            $this->db->bind(':id', $id);
+            
+            return $this->db->execute();
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
