@@ -146,7 +146,7 @@ class AdminController extends Controller {
         $data = [
             'title' => 'Edit Siswa - ' . APP_NAME,
             'student' => $student,
-            'classes' => $this->model('SchoolClass')->getAll()
+            'classes' => $this->model('ClassModel')->getAll()
         ];
         $this->view('admin/users_edit', $data);
     }
@@ -168,7 +168,7 @@ class AdminController extends Controller {
             'title' => 'Edit Ujian - ' . APP_NAME,
             'exam' => $exam,
             'subjects' => $this->model('Subject')->getAll(),
-            'classes' => $this->model('SchoolClass')->getAll()
+            'classes' => $this->model('ClassModel')->getAll()
         ];
         $this->view('admin/exams_edit', $data);
     }
@@ -192,7 +192,7 @@ class AdminController extends Controller {
             'question' => $question,
             'choices' => $choices,
             'subjects' => $this->model('Subject')->getAll(),
-            'classes' => $this->model('SchoolClass')->getAll()
+            'classes' => $this->model('ClassModel')->getAll()
         ];
         $this->view('admin/questions_edit', $data);
     }

@@ -121,7 +121,7 @@
                     </div>
                 </div>
                 <div class="topbar-actions">
-                    <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/exams/create') ?>')">
+                    <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/create_exam') ?>')">
                         <i class="fas fa-plus"></i>
                         <span>Buat Ujian Baru</span>
                     </button>

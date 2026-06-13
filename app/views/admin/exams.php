@@ -4,7 +4,7 @@
             <h1>Manajemen Ujian</h1>
             <p>Kelola semua ujian, termasuk status dan materi yang telah dibuat.</p>
         </div>
-        <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/exams/create') ?>')">
+        <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/create_exam') ?>')">
             <i class="fas fa-plus"></i>
             <span>Buat Ujian Baru</span>
         </button>

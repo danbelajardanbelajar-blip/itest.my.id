@@ -14,9 +14,9 @@
                 <span class="hide-on-mobile">Impor Excel</span>
                 <input type="file" accept=".xlsx, .xls" style="display: none;">
             </label>
-            <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/questions/create') ?>')">
+            <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/create_question') ?>')">
                 <i class="fas fa-plus"></i>
-                <span>Buat Soal Baru</span>
+                <span>Soal Baru</span>
             </button>
         </div>
     </div>

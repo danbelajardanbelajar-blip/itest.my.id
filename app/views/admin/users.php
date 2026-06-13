@@ -14,7 +14,7 @@
                 <span class="hide-on-mobile">Impor Excel</span>
                 <input type="file" accept=".xlsx, .xls" style="display: none;">
             </label>
-            <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/users/create') ?>')">
+            <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/create_user') ?>')">
                 <i class="fas fa-plus"></i>
                 <span>Siswa Baru</span>
             </button>

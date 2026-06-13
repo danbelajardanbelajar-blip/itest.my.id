@@ -4,7 +4,7 @@
             <h1>Data Ruangan</h1>
             <p>Kelola data ruangan fisik / lab untuk pelaksanaan ujian CBT.</p>
         </div>
-        <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/rooms/create') ?>')">
+        <button class="btn-primary-admin" onclick="alert('Fitur ini akan segera hadir!');">
             <i class="fas fa-plus"></i>
             <span>Tambah Ruangan</span>
         </button>

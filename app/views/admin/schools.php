@@ -4,9 +4,9 @@
             <h1>Data Lembaga</h1>
             <p>Kelola data instansi pendidikan, jenjang, dan logo lembaga.</p>
         </div>
-        <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/schools/create') ?>')">
+        <button class="btn-primary-admin" onclick="alert('Fitur ini akan segera hadir!');">
             <i class="fas fa-plus"></i>
-            <span>Tambah Lembaga</span>
+            <span>Tambah Sekolah</span>
         </button>
     </div>
 

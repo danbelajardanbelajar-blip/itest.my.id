@@ -14,9 +14,9 @@
                 <span class="hide-on-mobile">Impor Excel</span>
                 <input type="file" accept=".xlsx, .xls" style="display: none;">
             </label>
-            <button class="btn-primary-admin" onclick="window.router.navigate('<?= url('admin/staff/create') ?>')">
+            <button class="btn-primary-admin" onclick="alert('Fitur ini akan segera hadir!');">
                 <i class="fas fa-plus"></i>
-                <span>Pegawai Baru</span>
+                <span>Tambah Pegawai</span>
             </button>
         </div>
     </div>
