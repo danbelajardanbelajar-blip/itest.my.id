@@ -394,6 +394,13 @@ class AdminController extends Controller {
         $writer->save('php://output');
         exit;
     }
+    public function settings() {
+        $data = [
+            'title' => 'Pengaturan Sistem - ' . APP_NAME
+        ];
+        $this->view('admin/settings', $data);
+    }
+
     // --- CRUD ENDPOINTS ---
 
     // Classes
