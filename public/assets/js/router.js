@@ -110,7 +110,9 @@ class Router {
             'create_room': 'rooms',
             'editroom': 'rooms',
             'create_class': 'classes',
-            'editclass': 'classes'
+            'editclass': 'classes',
+            'create_account_user': 'account_users',
+            'edit_account_user': 'account_users'
         };
 
         let activeKeyword = '';

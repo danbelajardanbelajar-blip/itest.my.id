@@ -69,6 +69,11 @@
                     <span>Manajemen Pegawai</span>
                 </button>
 
+                <button class="nav-item <?= strpos($currentUri, 'admin/account_users') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/account_users') ?>')">
+                    <i class="fas fa-users-cog"></i>
+                    <span>Kelola Pengguna</span>
+                </button>
+
                 <button class="nav-item <?= strpos($currentUri, 'admin/schools') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/schools') ?>')">
                     <i class="fas fa-building"></i>
                     <span>Data Lembaga</span>
