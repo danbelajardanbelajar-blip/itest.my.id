@@ -57,7 +57,7 @@
                     <input type="checkbox" name="remember" />
                     <span>Ingat saya</span>
                 </label>
-                <a href="#" class="forgot-password no-spa">Lupa kata sandi?</a>
+                <a href="<?= url('auth/forgotPassword') ?>" class="forgot-password no-spa">Lupa kata sandi?</a>
             </div>
 
             <button type="submit" class="login-button">

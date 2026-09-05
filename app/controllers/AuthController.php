@@ -59,7 +59,25 @@ class AuthController extends Controller {
     }
 
     public function forgotPassword() {
-        // Placeholder for forgot password
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $email = $_POST['email'] ?? '';
+            
+            if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.']);
+            }
+
+            if (empty($email)) {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Email wajib diisi.']);
+            }
+
+            // Simulasi pengiriman email
+            $this->jsonResponse([
+                'status' => 'success',
+                'message' => 'Jika email Anda terdaftar, link reset password telah dikirim.',
+                'redirect' => BASE_URL . 'login'
+            ]);
+        }
+
         $this->view('auth/forgot-password', ['title' => 'Lupa Password - ' . APP_NAME]);
     }
 
