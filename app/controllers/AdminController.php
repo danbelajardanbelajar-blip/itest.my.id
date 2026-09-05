@@ -667,4 +667,142 @@ class AdminController extends Controller {
             }
         }
     }
+
+    // --- USER ACCOUNT MANAGEMENT ---
+
+    public function account_users() {
+        $role = $_GET['role'] ?? null;
+        $users = $this->model('User')->getAll($role);
+        $allUsers = $this->model('User')->getAll();
+
+        $data = [
+            'title' => 'Kelola Pengguna Sistem - ' . APP_NAME,
+            'users' => $users,
+            'all_users' => $allUsers
+        ];
+        $this->view('admin/account_users', $data);
+    }
+
+    public function create_account_user() {
+        $data = [
+            'title' => 'Tambah Pengguna Baru - ' . APP_NAME
+        ];
+        $this->view('admin/account_users_create', $data);
+    }
+
+    public function store_account_user() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $name = trim($_POST['name'] ?? '');
+            $username = trim($_POST['username'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $role = $_POST['role'] ?? 'student';
+            $status = $_POST['status'] ?? 'active';
+
+            if (empty($name) || empty($username) || empty($email) || empty($password)) {
+                echo json_encode(['status' => 'error', 'message' => 'Semua kolom wajib diisi']);
+                return;
+            }
+
+            $userModel = $this->model('User');
+            if ($userModel->findByUsernameOrEmail($username) || $userModel->findByUsernameOrEmail($email)) {
+                echo json_encode(['status' => 'error', 'message' => 'Username atau Email sudah terdaftar']);
+                return;
+            }
+
+            $data = [
+                'name' => $name,
+                'username' => $username,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role,
+                'status' => $status
+            ];
+
+            if ($userModel->create($data)) {
+                echo json_encode(['status' => 'success', 'message' => 'Pengguna berhasil ditambahkan', 'spa_redirect' => url('admin/account_users')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menambahkan pengguna']);
+            }
+        }
+    }
+
+    public function edit_account_user($id) {
+        $user = $this->model('User')->getById($id);
+        if (!$user) $this->redirect('admin/account_users');
+
+        $data = [
+            'title' => 'Edit Pengguna - ' . APP_NAME,
+            'user' => $user
+        ];
+        $this->view('admin/account_users_edit', $data);
+    }
+
+    public function update_account_user($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $userModel = $this->model('User');
+            $existing = $userModel->getById($id);
+            if (!$existing) {
+                echo json_encode(['status' => 'error', 'message' => 'Pengguna tidak ditemukan']);
+                return;
+            }
+
+            $name = trim($_POST['name'] ?? '');
+            $username = trim($_POST['username'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $password = $_POST['password'] ?? '';
+            $role = $_POST['role'] ?? $existing->role;
+            $status = $_POST['status'] ?? $existing->status;
+
+            if (empty($name) || empty($username) || empty($email)) {
+                echo json_encode(['status' => 'error', 'message' => 'Nama, Username, dan Email wajib diisi']);
+                return;
+            }
+
+            $data = [
+                'name' => $name,
+                'username' => $username,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role,
+                'status' => $status
+            ];
+
+            if ($userModel->update($id, $data)) {
+                echo json_encode(['status' => 'success', 'message' => 'Data pengguna berhasil diperbarui', 'redirect' => url('admin/account_users')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui pengguna']);
+            }
+        }
+    }
+
+    public function delete_account_user($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($id == Auth::user()->id) {
+                echo json_encode(['status' => 'error', 'message' => 'Anda tidak dapat menghapus akun Anda sendiri']);
+                return;
+            }
+
+            if ($this->model('User')->delete($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Pengguna berhasil dihapus', 'spa_reload' => true]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus pengguna']);
+            }
+        }
+    }
+
+    public function toggle_user_status($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if ($id == Auth::user()->id) {
+                echo json_encode(['status' => 'error', 'message' => 'Anda tidak dapat menonaktifkan akun Anda sendiri']);
+                return;
+            }
+
+            if ($this->model('User')->toggleStatus($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Status pengguna berhasil diperbarui']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal mengubah status pengguna']);
+            }
+        }
+    }
 }
