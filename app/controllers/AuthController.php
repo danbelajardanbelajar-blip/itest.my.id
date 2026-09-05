@@ -120,10 +120,68 @@ class AuthController extends Controller {
                 $this->jsonResponse(['status' => 'error', 'message' => 'Email wajib diisi.']);
             }
 
-            // Simulasi pengiriman email
+            $userModel = $this->model('User');
+            $user = $userModel->findByUsernameOrEmail($email);
+            
+            if ($user) {
+                // Generate password sementara 8 karakter alphanumeric
+                $tempPassword = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, 8);
+                
+                // Update ke database
+                $userModel->updatePasswordByEmail($email, $tempPassword);
+
+                // Load PHPMailer
+                $autoloadPath = BASE_PATH . '/../vendor/autoload.php';
+                $phpmailerPath = BASE_PATH . '/../vendor/phpmailer/src/PHPMailer.php';
+                
+                if (file_exists($autoloadPath)) {
+                    require_once $autoloadPath;
+                } else {
+                    require_once BASE_PATH . '/../vendor/phpmailer/src/Exception.php';
+                    require_once BASE_PATH . '/../vendor/phpmailer/src/PHPMailer.php';
+                    require_once BASE_PATH . '/../vendor/phpmailer/src/SMTP.php';
+                }
+
+                $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+
+                try {
+                    // Konfigurasi SMTP (Silakan ganti dengan kredensial asli nanti)
+                    $mail->isSMTP();
+                    $mail->Host       = 'smtp.gmail.com'; 
+                    $mail->SMTPAuth   = true;
+                    $mail->Username   = 'email_anda@gmail.com'; // TODO: Ganti
+                    $mail->Password   = 'password_aplikasi_anda'; // TODO: Ganti
+                    $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
+                    $mail->Port       = 465;
+
+                    // Pengirim & Penerima
+                    $mail->setFrom('no-reply@itest.my.id', 'iTest CBT System');
+                    $mail->addAddress($email, $user->name);
+
+                    // Konten
+                    $mail->isHTML(true);
+                    $mail->Subject = 'Reset Password Akun iTest CBT';
+                    $mail->Body    = "
+                        <h3>Halo, {$user->name}</h3>
+                        <p>Kami telah menerima permintaan reset password untuk akun Anda.</p>
+                        <p>Password sementara Anda adalah: <b>{$tempPassword}</b></p>
+                        <p>Silakan login menggunakan password sementara tersebut dan SEGERA ganti password Anda di menu Pengaturan Akun demi keamanan.</p>
+                        <br>
+                        <p>Salam,<br>Tim Administrator iTest CBT</p>
+                    ";
+                    $mail->AltBody = "Halo, {$user->name}\nPassword sementara Anda adalah: {$tempPassword}\nSilakan login dan segera ganti password Anda.";
+
+                    $mail->send();
+                } catch (Exception $e) {
+                    // Log error but still return success visually or return error
+                    $this->jsonResponse(['status' => 'error', 'message' => 'Gagal mengirim email: ' . $mail->ErrorInfo]);
+                }
+            }
+
+            // Return success (meniru behavior sistem yang tidak memberi tahu jika email salah demi keamanan)
             $this->jsonResponse([
                 'status' => 'success',
-                'message' => 'Jika email Anda terdaftar, link reset password telah dikirim.',
+                'message' => 'Jika email Anda terdaftar, password sementara telah dikirim.',
                 'redirect' => BASE_URL . 'login'
             ]);
         }
