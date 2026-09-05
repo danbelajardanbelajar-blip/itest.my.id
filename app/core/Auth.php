@@ -34,4 +34,8 @@ class Auth {
     public static function isStudent() {
         return self::check() && $_SESSION['role'] === 'student';
     }
+
+    public static function isTeacher() {
+        return self::check() && $_SESSION['role'] === 'teacher';
+    }
 }

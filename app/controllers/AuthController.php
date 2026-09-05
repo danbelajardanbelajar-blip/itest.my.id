@@ -43,7 +43,7 @@ class AuthController extends Controller {
                 $userModel->logActivity($user->id, 'Login to system', $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
 
                 // Determine redirect
-                $redirectUrl = BASE_URL . ($user->role === 'admin' ? 'admin/dashboard' : 'student/dashboard');
+                $redirectUrl = BASE_URL . ($user->role === 'admin' ? 'admin/dashboard' : ($user->role === 'teacher' ? 'teacher/dashboard' : 'student/dashboard'));
 
                 $this->jsonResponse([
                     'status' => 'success',

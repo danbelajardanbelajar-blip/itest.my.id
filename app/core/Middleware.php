@@ -22,10 +22,20 @@ class Middleware {
         }
     }
 
+    public static function requireTeacher() {
+        self::requireLogin();
+        if (!Auth::isTeacher()) {
+            die("Access Denied. Teacher privileges required.");
+        }
+    }
+
     public static function requireGuest() {
         if (Auth::check()) {
             if (Auth::isAdmin()) {
                 header('Location: ' . BASE_URL . 'admin/dashboard');
+                exit;
+            } elseif (Auth::isTeacher()) {
+                header('Location: ' . BASE_URL . 'teacher/dashboard');
                 exit;
             } else {
                 header('Location: ' . BASE_URL . 'student/dashboard');
