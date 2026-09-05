@@ -53,4 +53,10 @@ class Result {
         $this->db->bind(':exam_id', $examId);
         return $this->db->resultSet();
     }
+
+    public function getGlobalAverageScore() {
+        $this->db->query("SELECT AVG(score) as avg_score FROM results");
+        $row = $this->db->single();
+        return $row && $row->avg_score !== null ? round((float)$row->avg_score, 1) : 0.0;
+    }
 }
