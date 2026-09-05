@@ -36,7 +36,7 @@
         </div>
 
         <!-- Main Content Settings -->
-        <div class="settings-content glass-panel">
+        <div class="settings-content glass-panel" style="padding: 28px;">
             
             <!-- TAB: Profil Institusi -->
             <div id="tab-profile" class="tab-pane active">
@@ -216,6 +216,10 @@
     background: rgba(59, 130, 246, 0.1);
     color: #3b82f6;
     border-left: 3px solid #3b82f6;
+}
+
+.settings-content {
+    padding: 28px;
 }
 
 .tab-title {
