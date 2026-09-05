@@ -58,6 +58,56 @@ class AuthController extends Controller {
         $this->view('auth/login', ['title' => 'Login - ' . APP_NAME]);
     }
 
+    public function register() {
+        Middleware::requireGuest();
+
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Invalid CSRF token.']);
+            }
+
+            $name = $_POST['name'] ?? '';
+            $nip = $_POST['nip'] ?? '';
+            $email = $_POST['email'] ?? '';
+            $password = $_POST['password'] ?? '';
+            $password_confirm = $_POST['password_confirm'] ?? '';
+
+            if (empty($name) || empty($nip) || empty($email) || empty($password)) {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Semua field wajib diisi.']);
+            }
+
+            if ($password !== $password_confirm) {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Konfirmasi password tidak cocok.']);
+            }
+
+            $userModel = $this->model('User');
+            if ($userModel->findByUsernameOrEmail($email) || $userModel->findByUsernameOrEmail($nip)) {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Email atau NIP sudah terdaftar.']);
+            }
+
+            $data = [
+                'name' => $name,
+                'nip' => $nip,
+                'email' => $email,
+                'password' => $password,
+                'gender' => 'L', // default
+                'phone' => '' // default
+            ];
+
+            if ($this->model('Teacher')->create($data)) {
+                $this->jsonResponse([
+                    'status' => 'success',
+                    'message' => 'Pendaftaran berhasil. Silakan login.',
+                    'redirect' => BASE_URL . 'login'
+                ]);
+            } else {
+                $this->jsonResponse(['status' => 'error', 'message' => 'Gagal mendaftar. Silakan coba lagi.']);
+            }
+        }
+
+        $this->view('auth/register', ['title' => 'Daftar Staf - ' . APP_NAME]);
+    }
+
     public function forgotPassword() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $email = $_POST['email'] ?? '';

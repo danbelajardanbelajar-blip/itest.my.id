@@ -38,7 +38,7 @@ class Teacher {
             $this->db->query("INSERT INTO users (name, username, email, password, role, status) VALUES (:name, :username, :email, :password, 'teacher', 'active')");
             $this->db->bind(':name', $data['name']);
             $this->db->bind(':username', $data['nip']); // Default username is NIP
-            $this->db->bind(':email', $data['nip'] . '@teacher.com'); // Placeholder email
+            $this->db->bind(':email', !empty($data['email']) ? $data['email'] : $data['nip'] . '@teacher.com');
             $this->db->bind(':password', password_hash($data['password'], PASSWORD_DEFAULT));
             $this->db->execute();
 
