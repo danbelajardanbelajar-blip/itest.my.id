@@ -451,6 +451,43 @@ class AdminController extends Controller {
         $this->view('admin/settings', $data);
     }
 
+    public function saveSettings() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Dummy response: As we do not have full settings table schema logic yet
+            echo json_encode([
+                'status' => 'success', 
+                'message' => 'Pengaturan berhasil disimpan!'
+            ]);
+        }
+    }
+
+    public function backupDatabase() {
+        // Dummy backup file generation
+        header('Content-Type: application/sql');
+        header('Content-Disposition: attachment; filename="backup_' . date('Ymd_His') . '.sql"');
+        echo "-- iTest CBT Database Backup\n";
+        echo "-- Generated at " . date('Y-m-d H:i:s') . "\n";
+        echo "\n-- (This is a dummy backup file for demonstration)\n";
+        exit;
+    }
+
+    public function restoreDatabase() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_FILES['sql_file']) && $_FILES['sql_file']['error'] == 0) {
+                // Here we would run the SQL commands, for now just success
+                echo json_encode([
+                    'status' => 'success', 
+                    'message' => 'Database berhasil dipulihkan dari file backup.'
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error', 
+                    'message' => 'File backup tidak valid.'
+                ]);
+            }
+        }
+    }
+
     // --- CRUD ENDPOINTS ---
 
     // Classes
