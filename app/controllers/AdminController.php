@@ -17,7 +17,7 @@ class AdminController extends Controller {
             'title' => 'Dashboard Admin - ' . APP_NAME,
             'total_students' => count($this->model('Student')->getAll()),
             'total_exams' => count($exams),
-            'avg_score' => 0.0, // Placeholder
+            'avg_score' => $this->model('Result')->getGlobalAverageScore(),
             'recent_exams' => array_slice($exams, 0, 5) // Ambil 5 ujian terbaru
         ];
 
