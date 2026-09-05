@@ -12,11 +12,16 @@ class TeacherController extends Controller {
 
     public function dashboard() {
         $teacher = $this->model('Teacher')->getByUserId(Auth::user()->id);
+        $exams = $this->model('Exam')->getAll();
         
         $data = [
             'title' => 'Dashboard Guru - ' . APP_NAME,
             'user' => Auth::user(),
-            'teacher' => $teacher
+            'teacher' => $teacher,
+            'total_students' => count($this->model('Student')->getAll()),
+            'total_exams' => count($exams),
+            'avg_score' => $this->model('Result')->getGlobalAverageScore(),
+            'recent_exams' => array_slice($exams, 0, 5)
         ];
 
         $this->view('teacher/dashboard', $data);

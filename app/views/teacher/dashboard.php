@@ -9,7 +9,7 @@
         <div class="admin-stat-card glass-panel border-blue">
             <div class="stat-content">
                 <p>Total Siswa Terdaftar</p>
-                <h3><?= e(0) ?></h3>
+                <h3><?= e($total_students ?? 0) ?></h3>
             </div>
             <div class="stat-icon bg-blue">
                 <i class="fas fa-users" style="font-size: 24px; color: white;"></i>
@@ -18,7 +18,7 @@
         <div class="admin-stat-card glass-panel border-purple">
             <div class="stat-content">
                 <p>Total Ujian Aktif</p>
-                <h3><?= e(0) ?></h3>
+                <h3><?= e($total_exams ?? 0) ?></h3>
             </div>
             <div class="stat-icon bg-purple">
                 <i class="fas fa-book-open" style="font-size: 24px; color: white;"></i>
@@ -27,7 +27,7 @@
         <div class="admin-stat-card glass-panel border-green">
             <div class="stat-content">
                 <p>Rata-rata Nilai Siswa</p>
-                <h3><?= e('0.0') ?></h3>
+                <h3><?= e($avg_score ?? '0.0') ?></h3>
             </div>
             <div class="stat-icon bg-green">
                 <i class="fas fa-chart-line" style="font-size: 24px; color: white;"></i>
@@ -72,7 +72,7 @@
                                     <span class="badge badge-<?= $statusClass ?>" style="padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: <?= $exam->status === 'published' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(156, 163, 175, 0.15)' ?>; color: <?= $exam->status === 'published' ? '#34d399' : '#9ca3af' ?>;"><?= $statusText ?></span>
                                 </td>
                                 <td style="padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                                    <button class="action-btn" onclick="window.router.navigate('<?= url('teacher/exams/edit/' . $exam->id) ?>')" title="Edit Ujian" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: var(--text-light); cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">
+                                    <button class="action-btn" onclick="window.router.navigate('<?= url('teacher/editExam/' . $exam->id) ?>')" title="Edit Ujian" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 32px; height: 32px; border-radius: 8px; color: var(--text-light); cursor: pointer; display: inline-flex; justify-content: center; align-items: center; transition: all 0.2s;">
                                         <i class="fas fa-edit" style="font-size: 14px;"></i>
                                     </button>
                                 </td>
