@@ -24,6 +24,15 @@ class Teacher {
         return $this->db->single();
     }
 
+    public function getByUserId($userId) {
+        $this->db->query("SELECT t.*, u.name, u.username, u.email, u.status 
+                          FROM teachers t 
+                          JOIN users u ON t.user_id = u.id 
+                          WHERE t.user_id = :user_id");
+        $this->db->bind(':user_id', $userId);
+        return $this->db->single();
+    }
+
     public function create($data) {
         try {
             $this->db->query("INSERT INTO users (name, username, email, password, role, status) VALUES (:name, :username, :email, :password, 'teacher', 'active')");
