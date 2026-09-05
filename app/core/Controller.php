@@ -23,6 +23,8 @@ class Controller {
                 $layout = null; // No layout for exam_start, it has its own HTML
             } elseif (strpos($view, 'admin/') === 0) {
                 $layout = 'app/views/layouts/admin.php';
+            } elseif (strpos($view, 'teacher/') === 0) {
+                $layout = 'app/views/layouts/teacher.php';
             } elseif (strpos($view, 'student/') === 0) {
                 $layout = 'app/views/layouts/student.php';
             }
