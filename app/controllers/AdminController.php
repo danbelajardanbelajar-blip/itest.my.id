@@ -203,11 +203,44 @@ class AdminController extends Controller {
 
     public function updateQuestion($id) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $questionModel = $this->model('Question');
+            $existingQuestion = $questionModel->getById($id);
+            $imageName = $existingQuestion->question_image;
+
+            $uploadDir = BASE_PATH . '/public/uploads/questions/';
+            
+            if (!empty($_POST['remove_image']) && $_POST['remove_image'] == '1') {
+                if ($imageName && file_exists($uploadDir . $imageName)) {
+                    unlink($uploadDir . $imageName);
+                }
+                $imageName = null;
+            }
+
+            if (isset($_FILES['question_image']) && $_FILES['question_image']['error'] == 0) {
+                $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+                $filename = $_FILES['question_image']['name'];
+                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                
+                if (in_array($ext, $allowed) && $_FILES['question_image']['size'] <= 2097152) { // 2MB
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    $newImageName = time() . '_' . uniqid() . '.' . $ext;
+                    if (move_uploaded_file($_FILES['question_image']['tmp_name'], $uploadDir . $newImageName)) {
+                        // Delete old image
+                        if ($imageName && file_exists($uploadDir . $imageName)) {
+                            unlink($uploadDir . $imageName);
+                        }
+                        $imageName = $newImageName;
+                    }
+                }
+            }
+
             $data = [
                 'subject_id' => $_POST['subject_id'],
-                'class_id' => $_POST['class_id'],
+                'class_id' => !empty($_POST['class_id']) ? $_POST['class_id'] : null,
                 'question_text' => $_POST['question_text'],
-                'question_image' => null // Placeholder for image upload feature later
+                'question_image' => $imageName
             ];
 
             $options = $_POST['options'] ?? [];
@@ -293,10 +326,27 @@ class AdminController extends Controller {
 
     public function storeQuestion() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $imageName = null;
+            if (isset($_FILES['question_image']) && $_FILES['question_image']['error'] == 0) {
+                $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+                $filename = $_FILES['question_image']['name'];
+                $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                
+                if (in_array($ext, $allowed) && $_FILES['question_image']['size'] <= 2097152) { // 2MB
+                    $uploadDir = BASE_PATH . '/public/uploads/questions/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    $imageName = time() . '_' . uniqid() . '.' . $ext;
+                    move_uploaded_file($_FILES['question_image']['tmp_name'], $uploadDir . $imageName);
+                }
+            }
+
             $data = [
                 'subject_id' => $_POST['subject_id'] ?? 1,
                 'class_id' => !empty($_POST['class_id']) ? $_POST['class_id'] : null,
                 'question_text' => $_POST['question_text'] ?? '',
+                'question_image' => $imageName,
                 'question_type' => 'multiple_choice'
             ];
 

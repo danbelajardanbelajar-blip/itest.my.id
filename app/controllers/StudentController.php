@@ -127,7 +127,7 @@ class StudentController extends Controller {
             $formattedQuestions[] = [
                 'id' => $q->id,
                 'text' => $q->question_text,
-                'image' => $q->question_image ? asset('uploads/' . $q->question_image) : null,
+                'image' => $q->question_image ? asset('uploads/questions/' . $q->question_image) : null,
                 'options' => $formattedOptions,
                 'selected_option_id' => $ansDict[$q->id] ?? null,
                 'is_flagged' => $flagDict[$q->id] ?? false

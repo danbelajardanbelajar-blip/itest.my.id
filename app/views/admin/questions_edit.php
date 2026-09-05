@@ -8,7 +8,7 @@
     </div>
 
     <div class="admin-recent-section glass-panel" style="max-width: 900px;">
-        <form action="<?= url('admin/updateQuestion/' . $question->id) ?>" method="POST" class="ajax-form">
+        <form action="<?= url('admin/updateQuestion/' . $question->id) ?>" method="POST" enctype="multipart/form-data" class="ajax-form">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Mata Pelajaran</label>
@@ -28,6 +28,22 @@
                             <option value="<?= $c->id ?>" <?= $question->class_id == $c->id ? 'selected' : '' ?>><?= e($c->level) ?> - <?= e($c->name) ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Gambar Pendukung</label>
+                    <?php if(!empty($question->question_image)): ?>
+                        <div style="margin-bottom: 10px;">
+                            <img src="<?= asset('uploads/questions/' . $question->question_image) ?>" alt="Gambar Soal" style="max-height: 150px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2);">
+                            <div style="margin-top: 5px;">
+                                <label style="display: flex; align-items: center; gap: 8px; color: #ff6b6b; font-size: 0.9rem; cursor: pointer;">
+                                    <input type="checkbox" name="remove_image" value="1"> Hapus gambar ini
+                                </label>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <input type="file" name="question_image" accept="image/*" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
+                    <small style="color: var(--text-muted);">Biarkan kosong jika tidak ingin mengubah gambar.</small>
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">

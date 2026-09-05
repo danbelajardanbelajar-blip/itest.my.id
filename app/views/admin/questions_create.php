@@ -8,7 +8,7 @@
     </div>
 
     <div class="admin-recent-section glass-panel" style="max-width: 900px;">
-        <form action="<?= url('admin/storeQuestion') ?>" method="POST" class="ajax-form">
+        <form action="<?= url('admin/storeQuestion') ?>" method="POST" enctype="multipart/form-data" class="ajax-form">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Mata Pelajaran</label>
@@ -28,6 +28,12 @@
                             <option value="<?= $c->id ?>"><?= $c->level ?> - <?= $c->name ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Gambar Pendukung (Opsional)</label>
+                    <input type="file" name="question_image" accept="image/*" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
+                    <small style="color: var(--text-muted);">Format: JPG, PNG, GIF. Maks: 2MB.</small>
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
