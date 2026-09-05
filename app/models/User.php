@@ -21,4 +21,11 @@ class User {
         $this->db->bind(':user_agent', $userAgent);
         return $this->db->execute();
     }
+    public function updatePasswordByEmail($email, $newPassword) {
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $this->db->query("UPDATE users SET password = :password WHERE email = :email");
+        $this->db->bind(':password', $hashedPassword);
+        $this->db->bind(':email', $email);
+        return $this->db->execute();
+    }
 }
