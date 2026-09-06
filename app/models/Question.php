@@ -32,12 +32,23 @@ class Question {
         return $this->db->resultSet();
     }
 
+    public function getDistinctBundles() {
+        $this->db->query("SELECT DISTINCT bundle_name FROM questions WHERE bundle_name IS NOT NULL AND bundle_name != '' ORDER BY bundle_name ASC");
+        $results = $this->db->resultSet();
+        $bundles = [];
+        foreach ($results as $row) {
+            $bundles[] = $row->bundle_name;
+        }
+        return $bundles;
+    }
+
     public function create($data, $choices) {
         try {
-            $this->db->query("INSERT INTO questions (subject_id, class_id, question_text, question_image, question_type) 
-                              VALUES (:subject_id, :class_id, :question_text, :question_image, :question_type)");
+            $this->db->query("INSERT INTO questions (subject_id, class_id, bundle_name, question_text, question_image, question_type) 
+                              VALUES (:subject_id, :class_id, :bundle_name, :question_text, :question_image, :question_type)");
             $this->db->bind(':subject_id', $data['subject_id']);
             $this->db->bind(':class_id', $data['class_id'] ?? null);
+            $this->db->bind(':bundle_name', empty($data['bundle_name']) ? null : $data['bundle_name']);
             $this->db->bind(':question_text', $data['question_text']);
             $this->db->bind(':question_image', $data['question_image'] ?? null);
             $this->db->bind(':question_type', $data['question_type'] ?? 'multiple_choice');
@@ -70,11 +81,12 @@ class Question {
 
     public function update($id, $data, $choices) {
         try {
-            $this->db->query("UPDATE questions SET subject_id = :subject_id, class_id = :class_id, 
+            $this->db->query("UPDATE questions SET subject_id = :subject_id, class_id = :class_id, bundle_name = :bundle_name, 
                               question_text = :question_text, question_image = :question_image, 
                               question_type = :question_type WHERE id = :id");
             $this->db->bind(':subject_id', $data['subject_id']);
             $this->db->bind(':class_id', empty($data['class_id']) ? null : $data['class_id']);
+            $this->db->bind(':bundle_name', empty($data['bundle_name']) ? null : $data['bundle_name']);
             $this->db->bind(':question_text', $data['question_text']);
             $this->db->bind(':question_image', $data['question_image']);
             $this->db->bind(':question_type', $data['question_type'] ?? 'multiple_choice');
@@ -83,8 +95,8 @@ class Question {
 
             if (!empty($choices) && is_array($choices)) {
                 // Delete old choices
-                $this->db->query("DELETE FROM question_choices WHERE question_id = :question_id");
-                $this->db->bind(':question_id', $id);
+                $this->db->query("DELETE FROM question_choices WHERE question_id = :id");
+                $this->db->bind(':id', $id);
                 $this->db->execute();
 
                 // Insert new choices
@@ -106,7 +118,7 @@ class Question {
 
     public function getForExam($examId) {
         // Get exam details
-        $this->db->query("SELECT subject_id, class_id, total_questions, random_questions FROM exams WHERE id = :exam_id");
+        $this->db->query("SELECT subject_id, class_id, bundle_name, total_questions, random_questions FROM exams WHERE id = :exam_id");
         $this->db->bind(':exam_id', $examId);
         $exam = $this->db->single();
 
@@ -118,6 +130,11 @@ class Question {
         // Match class if exam specifies it
         if ($exam->class_id) {
             $query .= " AND (class_id = :class_id OR class_id IS NULL)";
+        }
+        
+        // Match bundle if exam specifies it
+        if (!empty($exam->bundle_name)) {
+            $query .= " AND bundle_name = :bundle_name";
         }
 
         // Randomize
@@ -136,6 +153,9 @@ class Question {
         $this->db->bind(':subject_id', $exam->subject_id);
         if ($exam->class_id) {
             $this->db->bind(':class_id', $exam->class_id);
+        }
+        if (!empty($exam->bundle_name)) {
+            $this->db->bind(':bundle_name', $exam->bundle_name);
         }
 
         return $this->db->resultSet();

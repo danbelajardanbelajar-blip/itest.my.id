@@ -31,6 +31,17 @@
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Bundel Soal (Opsional)</label>
+                    <input type="text" name="bundle_name" list="bundle-list" value="<?= e($question->bundle_name ?? '') ?>" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;" placeholder="Ketik nama bundel baru atau pilih yang sudah ada">
+                    <datalist id="bundle-list">
+                        <?php if(!empty($bundles)): foreach($bundles as $bundle): ?>
+                            <option value="<?= e($bundle) ?>"></option>
+                        <?php endforeach; endif; ?>
+                    </datalist>
+                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">Gunakan nama bundel yang sama untuk mengelompokkan soal-soal dalam satu paket ujian.</small>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
                     <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Gambar Pendukung</label>
                     <?php if(!empty($question->question_image)): ?>
                         <div style="margin-bottom: 10px;">

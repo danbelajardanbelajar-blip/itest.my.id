@@ -35,6 +35,17 @@
                     </select>
                 </div>
 
+                <div class="form-group" style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Gunakan Bundel Soal (Opsional)</label>
+                    <select name="bundle_name" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: #1f2937; color: white; border-radius: 8px;">
+                        <option value="">-- Ambil Acak dari Semua Bank Soal --</option>
+                        <?php if(!empty($bundles)): foreach($bundles as $bundle): ?>
+                            <option value="<?= e($bundle) ?>" <?= (isset($exam->bundle_name) && $exam->bundle_name === $bundle) ? 'selected' : '' ?>><?= e($bundle) ?></option>
+                        <?php endforeach; endif; ?>
+                    </select>
+                    <small style="color: #9ca3af; display: block; margin-top: 5px;">Jika dipilih, ujian ini HANYA akan menarik soal dari bundel yang ditentukan.</small>
+                </div>
+
                 <div class="form-group">
                     <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Waktu Mulai (Opsional)</label>
                     <input type="datetime-local" name="start_time" value="<?= date('Y-m-d\TH:i', strtotime($exam->start_time)) ?>" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">

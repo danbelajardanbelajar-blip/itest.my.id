@@ -41,7 +41,8 @@ class TeacherController extends Controller {
         $data = [
             'title' => 'Buat Ujian Baru - ' . APP_NAME,
             'subjects' => $this->model('Subject')->getAll(),
-            'classes' => $this->model('ClassModel')->getAll()
+            'classes' => $this->model('ClassModel')->getAll(),
+            'bundles' => $this->model('Question')->getDistinctBundles()
         ];
         $this->view('teacher/exams_create', $data);
     }
@@ -52,6 +53,7 @@ class TeacherController extends Controller {
                 'title' => $_POST['title'] ?? '',
                 'subject_id' => $_POST['subject_id'] ?? 1,
                 'class_id' => !empty($_POST['class_id']) ? $_POST['class_id'] : null,
+                'bundle_name' => !empty($_POST['bundle_name']) ? $_POST['bundle_name'] : null,
                 'start_time' => !empty($_POST['start_time']) ? $_POST['start_time'] : date('Y-m-d H:i:s'),
                 'end_time'   => !empty($_POST['end_time'])   ? $_POST['end_time']   : '2099-12-31 23:59:59',
                 'duration_minutes' => $_POST['duration_minutes'] ?? 60,
@@ -75,7 +77,8 @@ class TeacherController extends Controller {
             'title' => 'Edit Ujian - ' . APP_NAME,
             'exam' => $exam,
             'subjects' => $this->model('Subject')->getAll(),
-            'classes' => $this->model('ClassModel')->getAll()
+            'classes' => $this->model('ClassModel')->getAll(),
+            'bundles' => $this->model('Question')->getDistinctBundles()
         ];
         $this->view('teacher/exams_edit', $data);
     }
@@ -117,7 +120,8 @@ class TeacherController extends Controller {
         $data = [
             'title' => 'Buat Soal Baru - ' . APP_NAME,
             'subjects' => $this->model('Subject')->getAll(),
-            'classes' => $this->model('ClassModel')->getAll()
+            'classes' => $this->model('ClassModel')->getAll(),
+            'bundles' => $this->model('Question')->getDistinctBundles()
         ];
         $this->view('teacher/questions_create', $data);
     }
@@ -143,6 +147,7 @@ class TeacherController extends Controller {
             $data = [
                 'subject_id' => $_POST['subject_id'] ?? 1,
                 'class_id' => !empty($_POST['class_id']) ? $_POST['class_id'] : null,
+                'bundle_name' => !empty($_POST['bundle_name']) ? $_POST['bundle_name'] : null,
                 'question_text' => $_POST['question_text'] ?? '',
                 'question_image' => $imageName,
                 'question_type' => 'multiple_choice'
@@ -179,7 +184,8 @@ class TeacherController extends Controller {
             'question' => $question,
             'choices' => $choices,
             'subjects' => $this->model('Subject')->getAll(),
-            'classes' => $this->model('ClassModel')->getAll()
+            'classes' => $this->model('ClassModel')->getAll(),
+            'bundles' => $this->model('Question')->getDistinctBundles()
         ];
         $this->view('teacher/questions_edit', $data);
     }
@@ -222,6 +228,7 @@ class TeacherController extends Controller {
             $data = [
                 'subject_id' => $_POST['subject_id'],
                 'class_id' => !empty($_POST['class_id']) ? $_POST['class_id'] : null,
+                'bundle_name' => !empty($_POST['bundle_name']) ? $_POST['bundle_name'] : null,
                 'question_text' => $_POST['question_text'],
                 'question_image' => $imageName
             ];

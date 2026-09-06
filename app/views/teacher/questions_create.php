@@ -31,6 +31,17 @@
                 </div>
 
                 <div class="form-group" style="grid-column: span 2;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Bundel Soal (Opsional)</label>
+                    <input type="text" name="bundle_name" list="bundle-list" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;" placeholder="Ketik nama bundel baru atau pilih yang sudah ada (Misal: UTS Ganjil 2024)">
+                    <datalist id="bundle-list">
+                        <?php if(!empty($bundles)): foreach($bundles as $bundle): ?>
+                            <option value="<?= e($bundle) ?>"></option>
+                        <?php endforeach; endif; ?>
+                    </datalist>
+                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">Gunakan nama bundel yang sama untuk mengelompokkan soal-soal dalam satu paket ujian.</small>
+                </div>
+
+                <div class="form-group" style="grid-column: span 2;">
                     <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Gambar Pendukung (Opsional)</label>
                     <input type="file" name="question_image" accept="image/*" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
                     <small style="color: var(--text-muted);">Format: JPG, PNG, GIF. Maks: 2MB.</small>

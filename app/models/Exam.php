@@ -43,11 +43,12 @@ class Exam {
 
     public function create($data) {
         try {
-            $this->db->query("INSERT INTO exams (title, subject_id, class_id, start_time, end_time, duration_minutes, total_questions, passing_score, status) 
-                              VALUES (:title, :subject_id, :class_id, :start_time, :end_time, :duration_minutes, :total_questions, :passing_score, :status)");
+            $this->db->query("INSERT INTO exams (title, subject_id, class_id, bundle_name, start_time, end_time, duration_minutes, total_questions, passing_score, status) 
+                              VALUES (:title, :subject_id, :class_id, :bundle_name, :start_time, :end_time, :duration_minutes, :total_questions, :passing_score, :status)");
             $this->db->bind(':title', $data['title']);
             $this->db->bind(':subject_id', $data['subject_id']);
-            $this->db->bind(':class_id', $data['class_id'] ?? null);
+            $this->db->bind(':class_id', empty($data['class_id']) ? null : $data['class_id']);
+            $this->db->bind(':bundle_name', empty($data['bundle_name']) ? null : $data['bundle_name']);
             $this->db->bind(':start_time', $data['start_time']);
             $this->db->bind(':end_time', $data['end_time']);
             $this->db->bind(':duration_minutes', $data['duration_minutes']);
@@ -69,12 +70,13 @@ class Exam {
 
     public function update($id, $data) {
         try {
-            $this->db->query("UPDATE exams SET title = :title, subject_id = :subject_id, class_id = :class_id, 
+            $this->db->query("UPDATE exams SET title = :title, subject_id = :subject_id, class_id = :class_id, bundle_name = :bundle_name, 
                               start_time = :start_time, end_time = :end_time, duration_minutes = :duration_minutes, 
                               passing_score = :passing_score, status = :status WHERE id = :id");
             $this->db->bind(':title', $data['title']);
             $this->db->bind(':subject_id', $data['subject_id']);
             $this->db->bind(':class_id', empty($data['class_id']) ? null : $data['class_id']);
+            $this->db->bind(':bundle_name', empty($data['bundle_name']) ? null : $data['bundle_name']);
             $this->db->bind(':start_time', $data['start_time']);
             $this->db->bind(':end_time', $data['end_time']);
             $this->db->bind(':duration_minutes', $data['duration_minutes']);
