@@ -179,7 +179,10 @@ class AdminController extends Controller {
 
     public function updateExam($id) {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            if ($this->model('Exam')->update($id, $_POST)) {
+            $data = $_POST;
+            $data['start_time'] = !empty($_POST['start_time']) ? $_POST['start_time'] : date('Y-m-d H:i:s');
+            $data['end_time']   = !empty($_POST['end_time'])   ? $_POST['end_time']   : '2099-12-31 23:59:59';
+            if ($this->model('Exam')->update($id, $data)) {
                 echo json_encode(['status' => 'success', 'message' => 'Data ujian berhasil diperbarui', 'redirect' => url('admin/exams')]);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui data ujian']);
@@ -298,8 +301,8 @@ class AdminController extends Controller {
                 'title' => $_POST['title'] ?? '',
                 'subject_id' => $_POST['subject_id'] ?? 1,
                 'class_id' => !empty($_POST['class_id']) ? $_POST['class_id'] : null,
-                'start_time' => $_POST['start_time'] ?? date('Y-m-d H:i:s'),
-                'end_time' => $_POST['end_time'] ?? date('Y-m-d H:i:s', strtotime('+1 day')),
+                'start_time' => !empty($_POST['start_time']) ? $_POST['start_time'] : date('Y-m-d H:i:s'),
+                'end_time'   => !empty($_POST['end_time'])   ? $_POST['end_time']   : '2099-12-31 23:59:59',
                 'duration_minutes' => $_POST['duration_minutes'] ?? 60,
                 'total_questions' => $_POST['total_questions'] ?? 0,
                 'passing_score' => $_POST['passing_score'] ?? 70,

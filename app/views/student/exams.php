@@ -25,7 +25,7 @@
                         <h5 class="fw-bold mb-2"><?= e($exam->title) ?></h5>
                         <div class="small text-muted mb-3">
                             <div><i class="fas fa-calendar-alt me-1"></i> Mulai: <?= date('d M Y H:i', strtotime($exam->start_time)) ?></div>
-                            <div><i class="fas fa-flag-checkered me-1"></i> Selesai: <?= date('d M Y H:i', strtotime($exam->end_time)) ?></div>
+                            <div><i class="fas fa-flag-checkered me-1"></i> Selesai: <?= date('Y', strtotime($exam->end_time)) >= 2090 ? 'Tanpa Batas Waktu' : date('d M Y H:i', strtotime($exam->end_time)) ?></div>
                         </div>
                         <a href="<?= url('student/exam_start/' . $exam->id) ?>" class="btn btn-outline-primary w-100 fw-bold">Masuk Ujian <i class="fas fa-arrow-right ms-1"></i></a>
                     </div>

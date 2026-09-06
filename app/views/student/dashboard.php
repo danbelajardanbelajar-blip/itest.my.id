@@ -90,7 +90,7 @@
                                 </div>
                                 <?php if($exam->start_time || $exam->end_time): ?>
                                     <div class="meta-item" style="font-size: 0.75rem; margin-top: 6px; color: #ffbbaa;">
-                                        Jadwal: <?= $exam->start_time ? date('d M H:i', strtotime($exam->start_time)) : '' ?> - <?= $exam->end_time ? date('d M H:i', strtotime($exam->end_time)) : '' ?>
+                                        Jadwal: <?= $exam->start_time ? date('d M H:i', strtotime($exam->start_time)) : '' ?> - <?= date('Y', strtotime($exam->end_time)) >= 2090 ? 'Tanpa Batas Waktu' : date('d M H:i', strtotime($exam->end_time)) ?>
                                     </div>
                                 <?php endif; ?>
                             </div>

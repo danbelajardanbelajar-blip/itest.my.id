@@ -36,13 +36,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Waktu Mulai</label>
-                    <input type="datetime-local" name="start_time" required class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Waktu Mulai (Opsional)</label>
+                    <input type="datetime-local" name="start_time" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
+                    <small style="color: #9ca3af; display: block; margin-top: 5px;">Kosongkan jika ingin ujian langsung aktif otomatis.</small>
                 </div>
 
                 <div class="form-group">
-                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Waktu Selesai</label>
-                    <input type="datetime-local" name="end_time" required class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
+                    <label style="display: block; margin-bottom: 5px; color: var(--text-color); font-weight: 500;">Waktu Selesai (Opsional)</label>
+                    <input type="datetime-local" name="end_time" class="form-control" style="width: 100%; padding: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.2); color: white; border-radius: 8px;">
+                    <small style="color: #9ca3af; display: block; margin-top: 5px;">Kosongkan jika ujian berlaku selamanya (tanpa kedaluwarsa).</small>
                 </div>
 
                 <div class="form-group">
