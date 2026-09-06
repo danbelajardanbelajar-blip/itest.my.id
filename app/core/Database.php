@@ -20,6 +20,15 @@ class Database {
 
         try {
             $this->dbh = new PDO($dsn, $this->user, $this->pass, $options);
+            
+            // Auto-migrate bundles feature (Fail gracefully if columns exist)
+            try {
+                $this->dbh->exec("ALTER TABLE questions ADD COLUMN bundle_name VARCHAR(100) NULL AFTER class_id");
+            } catch (PDOException $e) { /* Ignore if already exists */ }
+            try {
+                $this->dbh->exec("ALTER TABLE exams ADD COLUMN bundle_name VARCHAR(100) NULL AFTER class_id");
+            } catch (PDOException $e) { /* Ignore if already exists */ }
+            
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
             die("Database connection failed: " . $this->error);
