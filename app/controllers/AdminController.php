@@ -815,4 +815,87 @@ class AdminController extends Controller {
             }
         }
     }
+
+    // ==========================================
+    // MATA PELAJARAN (SUBJECTS)
+    // ==========================================
+    public function subjects() {
+        $data = [
+            'title' => 'Mata Pelajaran - ' . APP_NAME,
+            'subjects' => $this->model('Subject')->getAll()
+        ];
+        $this->view('admin/subjects', $data);
+    }
+
+    public function create_subject() {
+        $data = [
+            'title' => 'Tambah Mata Pelajaran - ' . APP_NAME
+        ];
+        $this->view('admin/subjects_create', $data);
+    }
+
+    public function storeSubject() {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
+                return;
+            }
+            $data = [
+                'name' => trim($_POST['name']),
+                'code' => trim($_POST['code'])
+            ];
+            if (empty($data['name']) || empty($data['code'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Semua kolom wajib diisi']);
+                return;
+            }
+            if ($this->model('Subject')->create($data)) {
+                echo json_encode(['status' => 'success', 'message' => 'Mata pelajaran berhasil ditambahkan', 'redirect' => url('admin/subjects')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menambahkan mata pelajaran']);
+            }
+        }
+    }
+
+    public function editSubject($id) {
+        $data = [
+            'title' => 'Edit Mata Pelajaran - ' . APP_NAME,
+            'subject' => $this->model('Subject')->getById($id)
+        ];
+        if (!$data['subject']) {
+            redirect('admin/subjects');
+        }
+        $this->view('admin/subjects_edit', $data);
+    }
+
+    public function updateSubject($id) {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if (!verify_csrf_token($_POST['csrf_token'] ?? '')) {
+                echo json_encode(['status' => 'error', 'message' => 'Invalid CSRF token']);
+                return;
+            }
+            $data = [
+                'name' => trim($_POST['name']),
+                'code' => trim($_POST['code'])
+            ];
+            if (empty($data['name']) || empty($data['code'])) {
+                echo json_encode(['status' => 'error', 'message' => 'Semua kolom wajib diisi']);
+                return;
+            }
+            if ($this->model('Subject')->update($id, $data)) {
+                echo json_encode(['status' => 'success', 'message' => 'Mata pelajaran berhasil diperbarui', 'redirect' => url('admin/subjects')]);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal memperbarui mata pelajaran']);
+            }
+        }
+    }
+
+    public function deleteSubject($id) {
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            if ($this->model('Subject')->delete($id)) {
+                echo json_encode(['status' => 'success', 'message' => 'Mata pelajaran berhasil dihapus']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Gagal menghapus mata pelajaran']);
+            }
+        }
+    }
 }

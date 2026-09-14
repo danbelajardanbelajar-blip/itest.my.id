@@ -89,6 +89,11 @@
                     <span>Data Kelas</span>
                 </button>
 
+                <button class="nav-item <?= strpos($currentUri, 'admin/subjects') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/subjects') ?>')">
+                    <i class="fas fa-book"></i>
+                    <span>Mata Pelajaran</span>
+                </button>
+
                 <button class="nav-item <?= strpos($currentUri, 'admin/settings') !== false ? 'active' : '' ?>" onclick="window.router.navigate('<?= url('admin/settings') ?>')">
                     <i class="fas fa-cog"></i>
                     <span>Pengaturan</span>
