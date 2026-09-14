@@ -13,7 +13,7 @@ INSERT INTO `roles` (`name`) VALUES ('admin'), ('student');
 -- Insert Admin User (Password: 123456)
 -- password_hash('123456', PASSWORD_DEFAULT)
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `role`, `status`) VALUES
-(1, 'Administrator', 'admin', 'zenhkm@gmail.com', '$2y$10$gMgYoFkeXzZX/voeRQ0SKuYKaUccMJHIVNB/Ck9OIN8QjdosB8KzK', 'admin', 'active');
+(1, 'Administrator', 'admin', 'zenhkm@gmail.com', '$2y$10$uDZfreL8NS5BsKYbpJkxe.vpbJ/iqzH/63ppPdmIyRB0s8q5T1qWi', 'admin', 'active');
 
 -- Insert Demo Class
 INSERT INTO `classes` (`id`, `name`, `level`) VALUES
@@ -28,7 +28,7 @@ INSERT INTO `majors` (`id`, `name`, `code`) VALUES
 -- Insert Student User (Password: 123)
 -- password_hash('123', PASSWORD_DEFAULT)
 INSERT INTO `users` (`id`, `name`, `username`, `email`, `password`, `role`, `status`) VALUES
-(2, 'Siswa Demo', '12121212121212121', 'siswa@demo.com', '$2y$10$HvGK0CMG.Kw/utzEkVEg3e.5pS4nyPp/HkNcWL304XcErU7x0T4Ki', 'student', 'active');
+(2, 'Siswa Demo', '12121212121212121', 'siswa@demo.com', '$2y$10$UrZLQ5afmITOzsmvX3jS1.9rJ/.4tnQS7B.AQiRWO2XG2HoLYbzeC', 'student', 'active');
 
 -- Insert Student Detail
 INSERT INTO `students` (`user_id`, `nis`, `class_id`, `major_id`, `gender`, `phone`) VALUES
