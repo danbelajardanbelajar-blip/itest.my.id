@@ -28,6 +28,17 @@ class Student {
         return $this->db->single();
     }
 
+    public function getByUserId($user_id) {
+        $this->db->query("SELECT s.*, u.name, u.username, u.email, u.status, c.name as class_name, m.name as major_name 
+                          FROM students s 
+                          JOIN users u ON s.user_id = u.id 
+                          LEFT JOIN classes c ON s.class_id = c.id
+                          LEFT JOIN majors m ON s.major_id = m.id
+                          WHERE s.user_id = :user_id");
+        $this->db->bind(':user_id', $user_id);
+        return $this->db->single();
+    }
+
     public function create($data) {
         try {
             $this->db->query("INSERT INTO users (name, username, email, password, role, status) VALUES (:name, :username, :email, :password, 'student', 'active')");

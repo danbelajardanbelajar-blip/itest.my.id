@@ -11,7 +11,7 @@ class StudentController extends Controller {
     }
 
     public function dashboard() {
-        $student = $this->model('Student')->getById(Auth::user()->id);
+        $student = $this->model('Student')->getByUserId(Auth::user()->id);
         $upcoming_exams = $student ? $this->model('Exam')->getActiveForStudent($student->id) : [];
 
         $data = [
@@ -24,7 +24,7 @@ class StudentController extends Controller {
     }
 
     public function exams() {
-        $student = $this->model('Student')->getById(Auth::user()->id);
+        $student = $this->model('Student')->getByUserId(Auth::user()->id);
         $upcoming_exams = $student ? $this->model('Exam')->getActiveForStudent($student->id) : [];
 
         $data = [
@@ -35,7 +35,7 @@ class StudentController extends Controller {
     }
 
     public function history() {
-        $student = $this->model('Student')->getById(Auth::user()->id);
+        $student = $this->model('Student')->getByUserId(Auth::user()->id);
         $results = $student ? $this->model('Result')->getStudentHistory($student->id) : [];
 
         $data = [
@@ -52,7 +52,7 @@ class StudentController extends Controller {
             $this->redirect('student/exams');
         }
 
-        $student = $this->model('Student')->getById(Auth::user()->id);
+        $student = $this->model('Student')->getByUserId(Auth::user()->id);
         if (!$student) {
             $this->redirect('student/dashboard');
         }
@@ -86,7 +86,7 @@ class StudentController extends Controller {
     }
 
     public function getQuestions($examId) {
-        $student = $this->model('Student')->getById(Auth::user()->id);
+        $student = $this->model('Student')->getByUserId(Auth::user()->id);
         $session = $this->model('ExamSession')->getActiveSession($examId, $student->id);
 
         if (!$session) {
@@ -147,7 +147,7 @@ class StudentController extends Controller {
             $questionId = $_POST['question_id'] ?? null;
             $choiceId = $_POST['choice_id'] ?? null; // Can be null if deselecting (optional)
             
-            $student = $this->model('Student')->getById(Auth::user()->id);
+            $student = $this->model('Student')->getByUserId(Auth::user()->id);
             $session = $this->model('ExamSession')->getActiveSession($examId, $student->id);
 
             if ($session) {
@@ -168,7 +168,7 @@ class StudentController extends Controller {
             $questionId = $_POST['question_id'] ?? null;
             $isDoubtful = isset($_POST['is_doubtful']) && $_POST['is_doubtful'] === 'true';
             
-            $student = $this->model('Student')->getById(Auth::user()->id);
+            $student = $this->model('Student')->getByUserId(Auth::user()->id);
             $session = $this->model('ExamSession')->getActiveSession($examId, $student->id);
 
             if ($session) {
@@ -183,7 +183,7 @@ class StudentController extends Controller {
             $examId = $_POST['exam_id'] ?? null;
             $remaining = (int)($_POST['remaining'] ?? 0);
             
-            $student = $this->model('Student')->getById(Auth::user()->id);
+            $student = $this->model('Student')->getByUserId(Auth::user()->id);
             $session = $this->model('ExamSession')->getActiveSession($examId, $student->id);
 
             if ($session) {
@@ -200,7 +200,7 @@ class StudentController extends Controller {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $examId = $_POST['exam_id'] ?? null;
             
-            $student = $this->model('Student')->getById(Auth::user()->id);
+            $student = $this->model('Student')->getByUserId(Auth::user()->id);
             $session = $this->model('ExamSession')->getActiveSession($examId, $student->id);
 
             if ($session) {
