@@ -145,17 +145,17 @@ class AuthController extends Controller {
                 $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
 
                 try {
-                    // Konfigurasi SMTP (Silakan ganti dengan kredensial asli nanti)
+                    // Konfigurasi SMTP (diambil dari config.php)
                     $mail->isSMTP();
-                    $mail->Host       = 'smtp.gmail.com'; 
+                    $mail->Host       = SMTP_HOST; 
                     $mail->SMTPAuth   = true;
-                    $mail->Username   = 'email_anda@gmail.com'; // TODO: Ganti
-                    $mail->Password   = 'password_aplikasi_anda'; // TODO: Ganti
+                    $mail->Username   = SMTP_USER;
+                    $mail->Password   = SMTP_PASS;
                     $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_SMTPS;
-                    $mail->Port       = 465;
+                    $mail->Port       = SMTP_PORT;
 
                     // Pengirim & Penerima
-                    $mail->setFrom('no-reply@itest.my.id', 'iTest CBT System');
+                    $mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
                     $mail->addAddress($email, $user->name);
 
                     // Konten

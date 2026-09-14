@@ -12,3 +12,11 @@ define('APP_NAME', 'iTest CBT');
 
 // Konstanta Direktori
 define('UPLOAD_PATH', BASE_PATH . '/public/uploads/');
+
+// Konfigurasi SMTP Email
+define('SMTP_HOST', 'smtp.gmail.com');
+define('SMTP_USER', 'email_anda@gmail.com'); // TODO: Ganti dengan email aktif
+define('SMTP_PASS', 'password_aplikasi_anda'); // TODO: Ganti dengan app password aktif
+define('SMTP_PORT', 465);
+define('SMTP_FROM_EMAIL', 'no-reply@itest.my.id');
+define('SMTP_FROM_NAME', APP_NAME);
